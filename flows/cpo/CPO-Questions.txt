@@ -1,0 +1,92 @@
+Questions for CPO:
+----------------------------
+General:
+- Is there a CPO-Backend to test against ? Mock-Service?
+- Should we supply a cpo-node mock service ?
+
+Authorization Request: 
+- Is it possible to send the sessionData to the CPO-Node ?
+- Can you also provide the token.uid in the authorization request ?
+- How does the successful authorization endpoint look like ?
+- Does the CPO-Backend also needs informed about an unsuccessful authorization ?
+
+
+
+Requirements for CPO-Backend:
+----------------------------
+
+Assumed endpoints on CPO-Backend side:
+
+- e.g.: /authorization-successful -> Successful authorization endpoint -> What data do you need here ?  Only sessionId ? Do you also need to get informed in error case ?
+
+Endpoints on CPO-Node side:
+- /authorize-session -> payload: session data + token.uid
+- /authorization-callback -> receives the VP from SSI-Wallet (not relevant for CPO-Backend)
+- /charging-start -> payload: session data
+- /charging-update -> payload: session data
+- /charging-end -> payload: session data + cdr
+
+
+
+Questions for SSI-Wallet / EV-Dashboard:
+----------------------------
+
+
+- Is the token.uid *all* the EV-Dashboard needs to request the VP from the *correct* user ?
+- Can we rely on the EV-Dashboard that the VP is sent to the correct SSI-Wallet ?
+- Do we get a sessionId + customerDID in the VP coming from the SSI-Wallet ?
+
+- is the exchangeId = sessionId  --> yes we can use the sessionId
+
+- Redirect alles automatisch ? Kein UI ?
+
+- SSI-Wallet, checks that the VP matches the presentation defination + checks signatures/proofs
+- Rest checks the CPO-Node
+
+Meeting John 8.3.22:
+
+- What is a transactionId? transactionId is a uuid, it's NOT the exchangeId (in onetime case like ours) multiple transactions maybe necessary
+- What should happen if VP never comes from the SSI-Wallet ? --> Timeout on LamA side confirmed on 11.03 
+- How does end-confirmation work?
+
+	- stop-session-authorize on cpo node side
+	- end-confirmation on cpo-backend side
+
+- What does the SSI-Wallet sign, does it sign the session data from the cop-backend ?
+	- not currently, trust url is enough
+- Example for Invitation (is coming from john)
+
+
+
+
+
+George comments 03.03.2022:
+My attempt at potential answers:
+- Can you also provide the token.uid in the authorization request ? 
+I believe this comes from IToken (the OCPI token) in 4?
+https://github.com/energywebfoundation/ocn-bridge/blob/develop/src/models/ocpi/tokens.ts
+
+- Do we get a sessionId + customerDID in the VP coming from the SSI-Wallet ?
+You've probably seen this already but I think this is what Jon has in mind, no mention of sessionID.
+https://energyweb.atlassian.net/wiki/spaces/REB/pages/3045064731/VC+VP+Formats
+
+
+Comments on the flow diagram:
+
+Arrow 3: Add "Request START_SESSION [OCPI - blocking]" so they have a point of reference
+Missing arrow between 7 and 9: "return OCPI = COMMAND_RESPONSE = ACCEPTED". This is on CPO backend but might help them understand the flow. From what I've seen Harry wants these flows to be "complete" with no hidden arrows, so I suggest to try to have a version that has the full flow with all arrows.
+14: contract ID: Does it come from the VP ("contractID is assumed to be the VC id, though this might be a stretch" https://energyweb.atlassian.net/wiki/spaces/REB/pages/3045064731/VC+VP+Formats), or in IToken ("contract_id" property)? 
+13: ContractDID - does it exist yet? Looks created in 15.
+14: Verification happens in CPO Node calling SSI Wallet?
+7-17: Where will the response from /authorization-started be? There's no "Ok" arrow yet. 
+
+End Charging:
+Could be expanded on a bit in the future, namely:
+- Sending invoice to customer for billing
+- Sending invoice to supplier for records
+- Customer signs invoice to accept, or leaves it
+
+(FYI here's what I had:
+https://github.com/bloxmove-com/bloxmove-architecture-togateway-doorman/blob/main/invoice-flows/Invoicing%20Flow.png
+https://github.com/bloxmove-com/bloxmove-architecture-togateway-doorman/blob/main/invoice-flows/invoicing-flow-revised.puml
+

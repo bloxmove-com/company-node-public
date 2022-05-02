@@ -1,0 +1,745 @@
+openapi: "3.0.0"
+paths:
+  /:
+    get:
+      operationId: "AppController_isRunning"
+      parameters: []
+      responses:
+        200:
+          description: ""
+  /rental-requests:
+    post:
+      operationId: "VehicleRentalController_sendRentalRequest"
+      summary: ""
+      description: "Request a new rental with the given properties"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RentalRequest"
+      responses:
+        201:
+          description: "the rental contract has been successfully created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractDID"
+        400:
+          description: "wrong or missing properties in request body"
+        403:
+          description: "invalid consumerSignature or expired timestamp"
+        404:
+          description: "the requested vehicle or service package could not be found"
+        409:
+          description: "the vehicle has been booked in the meantime"
+  /rental-confirmations:
+    post:
+      operationId: "VehicleRentalController_sendRentalConfirmation"
+      summary: ""
+      description: "Confirm the rental with the given contract DID"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RentalConfirmation"
+      responses:
+        201:
+          description: "the rental contract has been successfully confirmed."
+        400:
+          description: "wrong or missing properties in request body"
+        403:
+          description: "invalid signedVerification"
+        409:
+          description: "the vehicle has been booked in the meantime"
+        423:
+          description: "rental contract is not in the required state to perform this action"
+  /rentals/{contractDID}/access-token:
+    get:
+      operationId: "VehicleRentalController_getAccessToken"
+      summary: ""
+      description: "Get an access token for vehicle unlock/lock"
+      parameters:
+        - name: "contractDID"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+        - name: "verifiablecredential"
+          in: "header"
+          description: "A Verifiable Credential containing the consumerAccessTokenRequest topic (JSON-LD or JWT format, alternative to consumerSignature)"
+          required: false
+          schema:
+            type: "string"
+        - name: "consumersignature"
+          in: "header"
+          description: "The signature with \"<contractDID>\" as payload. Must be signed by the consumer (alternative to verifiableCredential)"
+          required: false
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "the accessToken is returned successfully"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccessTokenResponse"
+        400:
+          description: "wrong or missing properties in request body"
+        403:
+          description: "invalid consumersignature or verifiablecredential in header"
+        423:
+          description: "rental contract is not in the required state to perform this action"
+  /rental-end-requests:
+    post:
+      operationId: "VehicleRentalController_sendRentalEndRequest"
+      summary: ""
+      description: "Request the end of the rental with the given contract DID"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RentalEndRequest"
+      responses:
+        201:
+          description: "the request to end the rental has been successfully sent"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsageData"
+        403:
+          description: "invalid consumerSignature or expired timestamp"
+        423:
+          description: "rental contract might be in the wrong state"
+  /rental-end-confirmations:
+    post:
+      operationId: "VehicleRentalController_sendRentalEndConfirmation"
+      summary: ""
+      description: "Confirm the end of the rental with the given contract DID"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RentalConfirmation"
+      responses:
+        201:
+          description: "the rental end has been successfully confirmed"
+        403:
+          description: "invalid signedVerification"
+        423:
+          description: "rental contract is not in the required state to perform this action"
+  /api/v1/door-status:
+    put:
+      operationId: "VehicleRentalController_updateDoorStatus"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoorStatusUpdateRequest"
+      responses:
+        200:
+          description: "door status changed successfully"
+        403:
+          description: "invalid access token"
+  /service-catalog:
+    get:
+      operationId: "FleetBackendController_getServiceCatalog"
+      summary: ""
+      description: "Get all services the fleet owner running this fleet node provides"
+      parameters: []
+      responses:
+        200:
+          description: "a list of all available services"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ServiceCatalog"
+  /vehicles/{vin}/telematics-data:
+    post:
+      operationId: "FleetBackendController_sendTelematicData"
+      summary: ""
+      description: "Store a telematics record for the given VIN and input data, signature over data must correspond to an authorized public key for the vehicle asset"
+      parameters:
+        - name: "vin"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TelematicsRecord"
+      responses:
+        201:
+          description: "the telematic data has been successfully added."
+        400:
+          description: "wrong or missing properties in request body"
+        403:
+          description: "invalid deviceSignature"
+        404:
+          description: "vehicle not registered in the naming system"
+  /vehicle-assets:
+    post:
+      operationId: "VehicleRegistrationController_createVehicleAssetRequest"
+      summary: ""
+      description: "Create and register a new vehicle asset"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleRegistration"
+      responses:
+        201:
+          description: "the vehicle asset has been successfully created and registered"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleDID"
+        400:
+          description: "wrong or missing properties in request body"
+        401:
+          description: "invalid or missing apiKey"
+        409:
+          description: "vehicle asset already exists"
+      security:
+        - apiKey: []
+  /vehicle-assets/{vin}:
+    put:
+      operationId: "VehicleRegistrationController_updateCar"
+      summary: ""
+      description: "Create and register a new vehicle asset"
+      parameters:
+        - name: "vin"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VehicleDetails"
+      responses:
+        201:
+          description: "the vehicle asset has been successfully updated"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleDID"
+        400:
+          description: "wrong or missing properties in request body"
+        401:
+          description: "invalid or missing apiKey"
+      security:
+        - apiKey: []
+    get:
+      operationId: "VehicleRegistrationController_getVehicleAsset"
+      summary: ""
+      description: "Get vehicle asset"
+      parameters:
+        - name: "vin"
+          required: true
+          in: "path"
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "the vehicle asset details has been fetched successfully"
+        401:
+          description: "invalid or missing apiKey"
+      security:
+        - apiKey: []
+info:
+  title: "Fleet Node v2.0.4"
+  description: "The FleetNode API description."
+  version: "1.0"
+  contact: {}
+tags: []
+servers:
+  - url: "/"
+components:
+  securitySchemes:
+    apiKey:
+      type: "apiKey"
+      in: "header"
+      name: "apiKey"
+  schemas:
+    RentalRequest:
+      type: "object"
+      properties:
+        vehicleDID:
+          type: "string"
+          description: "The DID of the vehicle"
+        consumerDID:
+          type: "string"
+          description: "The DID of the consumer"
+        packageId:
+          type: "number"
+          description: "The package Id of the Vehicle"
+        verifiablePresentation:
+          oneOf:
+            - $ref: "#/components/schemas/SwaggerAnnotatedVerifiablePresentation"
+            - $ref: "#/components/schemas/string"
+          description: "Verifiable Presentation containing consumer claims as Verifiable Credentials signed by consumer, either in JSON-LD or JWT String."
+      required:
+        - "vehicleDID"
+        - "consumerDID"
+        - "packageId"
+    ContractDID:
+      type: "object"
+      properties:
+        contractDID:
+          type: "string"
+          description: "The Vin of the vehicle"
+      required:
+        - "contractDID"
+    RentalConfirmation:
+      type: "object"
+      properties:
+        contractDID:
+          type: "string"
+          description: "The did of the rentalContract"
+        verifiableCredential:
+          oneOf:
+            - $ref: "#/components/schemas/SwaggerAnnotatedVerifiableCredential"
+            - $ref: "#/components/schemas/string"
+          description: "A Verifiable Credential containing the consumer confirmation (JSON-LD or JWT String)"
+      required:
+        - "contractDID"
+        - "verifiableCredential"
+    AccessTokenResponse:
+      type: "object"
+      properties:
+        endpoint:
+          type: "string"
+          description: "The car wallet endpoint to send the token to"
+        verifiableCredentials:
+          type: "array"
+          items:
+            oneOf:
+              - $ref: "#/components/schemas/SwaggerAnnotatedVerifiableCredential"
+              - $ref: "#/components/schemas/string"
+          description: "The verifiable credentials to open or close the door in JSON-LD or JWT format"
+      required:
+        - "endpoint"
+        - "verifiableCredentials"
+    RentalEndRequest:
+      type: "object"
+      properties:
+        contractDID:
+          type: "string"
+          description: "The did of the rental contract"
+        verifiableCredential:
+          oneOf:
+            - $ref: "#/components/schemas/SwaggerAnnotatedVerifiableCredential"
+            - $ref: "#/components/schemas/string"
+          description: "A Verifiable Credential containing the consumer confirmation (JSON-LD or JWT String)"
+      required:
+        - "contractDID"
+        - "verifiableCredential"
+    UsageData:
+      type: "object"
+      properties:
+        vin:
+          type: "string"
+          description: "The vin of the vehicle"
+        vehicleDID:
+          type: "string"
+          description: "The DID of the vehicle"
+        rentalStartTime:
+          type: "number"
+          description: "The timestamp (UTC seconds) when the rent started"
+        rentalStartMileage:
+          type: "number"
+          description: "The mileage (in km) of the time when the rent started"
+        rentalDuration:
+          type: "number"
+          description: "The total duration of the rent in minutes"
+        rentalMileage:
+          type: "number"
+          description: "The total mileage of the rent in km"
+        rentalEndTime:
+          type: "number"
+          description: "The timestamp (UTC seconds) when the rent ended"
+        rentalEndMileage:
+          type: "number"
+          description: "Mileage (in km) of the time when the rent ended"
+        rentalStartLocLat:
+          type: "number"
+          description: "The latitude of the location where the rent started"
+        rentalStartLocLong:
+          type: "number"
+          description: "The longitude of the location where the rent started"
+        rentalEndLocLat:
+          type: "number"
+          description: "The latitude of the location where the rent ended"
+        rentalEndLocLong:
+          type: "number"
+          description: "The longitude of the location where the rent ended"
+        finalPrice:
+          type: "number"
+          description: "The final price of the rent in the currency specified in the contract data"
+        priceComment:
+          type: "string"
+          description: "The optional comment related to the final price"
+      required:
+        - "vin"
+        - "vehicleDID"
+        - "rentalStartTime"
+        - "rentalStartMileage"
+        - "rentalDuration"
+        - "rentalMileage"
+        - "rentalEndTime"
+        - "rentalEndMileage"
+        - "rentalStartLocLat"
+        - "rentalStartLocLong"
+        - "rentalEndLocLat"
+        - "rentalEndLocLong"
+        - "finalPrice"
+    DoorStatusUpdateRequest:
+      type: "object"
+      properties:
+        contractDID:
+          type: "string"
+          description: "the DID of the rental contract"
+        accessToken:
+          oneOf:
+            - $ref: "#/components/schemas/SwaggerAnnotatedVerifiablePresentation"
+            - $ref: "#/components/schemas/string"
+          description: "The verifiable presentation to open or close the door in JSON-LD or JWT format"
+        status:
+          type: "string"
+          enum:
+            - "OPEN"
+            - "CLOSED"
+          description: "the new status the door of the car should have"
+      required:
+        - "contractDID"
+        - "accessToken"
+        - "status"
+    ValidityPeriod:
+      type: "object"
+      properties:
+        from:
+          type: "number"
+          example: 1574003890
+          description: "Timestamp (UTC seconds) that marks the beginning of the validity period."
+        to:
+          type: "number"
+          example: 1574013990
+          description: "Timestamp (UTC seconds) that marks the end of the validity period."
+      required:
+        - "from"
+        - "to"
+    ServicePackage:
+      type: "object"
+      properties:
+        packageId:
+          type: "number"
+          example: 42
+          description: "The package id of the service"
+        packageName:
+          type: "string"
+          example: "Upper mid-range vehicle standard"
+          description: "The name of the service package"
+        description:
+          type: "string"
+          example: "Standard minute based service package for upper mid-range vehicles"
+          description: "The description of the service package"
+        pricePerMinute:
+          type: "number"
+          example: 0.4
+          description: "The price per minute"
+        pricePerKm:
+          type: "number"
+          example: 0.1
+          description: "The price per kilometer"
+        validityPeriods:
+          description: "List of time frames when the service package is valid"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ValidityPeriod"
+        termsConditions:
+          type: "string"
+          example: "<h2>Valid as of 10.07.2019</h2><h2>§1 Subject matter</h2><h3>(1)</h3><p>Fleet2Share..."
+          description: "HTML representation of the full terms and conditions applicable for\n            this service package, may also be a link pointing to an external\n            HTML document"
+        requiredUserClaims:
+          description: "List of required claims an end consumer has\n        to fulfil in order to be allowed to book this package, if not set this means the package can\n        not be booked by end consumers (B2B-only)"
+          type: "array"
+          items:
+            type: "string"
+        requiredBusinessClaims:
+          description: "List of required claims a business has to fulfil in order\n     to be allowed to book this package, if not set this means the package can not be booked by businesses (B2C-only)"
+          type: "array"
+          items:
+            type: "string"
+        currency:
+          type: "string"
+          description: "The fiat currency that is used to pay for this service package, ISO 4217 code like EUR"
+      required:
+        - "packageId"
+        - "packageName"
+        - "description"
+        - "pricePerMinute"
+        - "pricePerKm"
+        - "validityPeriods"
+        - "termsConditions"
+        - "requiredUserClaims"
+        - "requiredBusinessClaims"
+        - "currency"
+    ServiceCatalog:
+      type: "object"
+      properties:
+        vehicleDID:
+          type: "string"
+          example: "did:evan:testcore:0x58737f36e3b9e0008769bd004e62ec3d5160ef8eea45274d4b2bd3f513837748"
+          description: "The DID of the vehicle"
+        servicePackages:
+          description: "Service packages associated with the vehicleDID"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ServicePackage"
+      required:
+        - "vehicleDID"
+        - "servicePackages"
+    TelematicsRecordData:
+      type: "object"
+      properties:
+        timestamp:
+          type: "number"
+          description: "The vin of the vehicle"
+        locLat:
+          type: "number"
+          description: "The Latitude of the current location of the vehicle"
+        locLong:
+          type: "number"
+          description: "The Longitude of the current location of the vehicle"
+        mileage:
+          type: "number"
+          description: "The current mileage of the vehicle in kilometers"
+        fuelLevel:
+          type: "number"
+          description: "The fuel level of the vehicle"
+        isDoorOpened:
+          type: "boolean"
+          description: "The status of the door"
+      required:
+        - "timestamp"
+        - "locLat"
+        - "locLong"
+        - "mileage"
+        - "fuelLevel"
+        - "isDoorOpened"
+    TelematicsRecord:
+      type: "object"
+      properties:
+        vin:
+          type: "string"
+          description: "The vin of the vehicle"
+        deviceId:
+          type: "string"
+          description: "The deviceId"
+        data:
+          description: "The TelematicsRecordData"
+          allOf:
+            - $ref: "#/components/schemas/TelematicsRecordData"
+        deviceSignature:
+          type: "string"
+          description: "The deviceSignature"
+      required:
+        - "vin"
+        - "deviceId"
+        - "data"
+        - "deviceSignature"
+    VehicleRegistration:
+      type: "object"
+      properties:
+        vin:
+          type: "string"
+          description: "The vin of the vehicle"
+        walletDIDs:
+          description: "The wallet DIDs"
+          type: "array"
+          items:
+            type: "string"
+        proofOfOwnership:
+          type: "string"
+          description: "The proof of ownership"
+        zone:
+          type: "string"
+          description: "The zone of the vehicle to be set in the virtual car wallet"
+        thingId:
+          type: "string"
+          description: "The telematics box thingId to be set in the virtual car wallet"
+      required:
+        - "vin"
+        - "walletDIDs"
+        - "proofOfOwnership"
+    VehicleDID:
+      type: "object"
+      properties:
+        vehicleDID:
+          type: "string"
+          description: "The DID of the vehicle asset"
+      required:
+        - "vehicleDID"
+    VehicleDetails:
+      type: "object"
+      properties:
+        assetDID:
+          description: "The asset DIDs"
+          type: "array"
+          items:
+            type: "string"
+        zone:
+          type: "string"
+          description: "The zone of the vehicle to be set in the virtual car wallet"
+        thingId:
+          type: "string"
+          description: "The telematics box thingId to be set in the virtual car wallet"
+    SwaggerAnnotatedLinkedDataProof:
+      type: "object"
+      properties:
+        type:
+          type: "string"
+          description: "The type of a Proof. For example the proof algorithm EcdsaSecp256k1RecoverySignature2020."
+        proofPurpose:
+          type: "string"
+          description: "Clearly expressed purpose of a proof e.g. for a Verifiable Credential a proof is used to assert some information thus its proof purpose is assertionMethod."
+        verificationMethod:
+          type: "string"
+          description: "The value that can be used to verify the proofs signature. Can be the credentials of a valid delegate."
+        created:
+          type: "string"
+          description: "ISO8601 Date String of the proof creation."
+        domain:
+          type: "string"
+          description: "A string value that specifies the operational domain of a digital proof."
+        challenge:
+          type: "string"
+          description: "A string value that protect against replay attacks."
+        proofValue:
+          type: "string"
+          description: "Valid representation of a proof value generated by the proof algorithm described in type."
+        jws:
+          type: "string"
+          description: "Valid representation of a jws generated by the proof algorithm described in type."
+      required:
+        - "type"
+        - "proofPurpose"
+        - "verificationMethod"
+        - "created"
+        - "proofValue"
+        - "jws"
+    SwaggerAnnotatedVerifiableCredential:
+      type: "object"
+      properties:
+        context:
+          type: "array"
+          description: "The set of context for a Verifiable Credential. First item has to be a URI string with the value https://www.w3.org/2018/credentials/v1"
+          items:
+            type: "string"
+        type:
+          type: "array"
+          description: "The type of a Verifiable Credential. W3C: \"The value of the type property MUST be, or map to (through interpretation of the @context property), one or more URIs.\""
+          items:
+            type: "string"
+        credentialSubject:
+          description: "A Object or an Array of Objects containing the subject(s) that are reffered to in the Verifiable Credential."
+          oneOf:
+            - type: "object"
+              properties:
+                id:
+                  type: "string"
+                key:
+                  type: "any"
+                  nullable: true
+            - type: "array"
+              items:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                  key:
+                    type: "any"
+                    nullable: true
+        issuer:
+          description: "URI of the entity that issues the Verifiable Credential. Can be a DID."
+          oneOf:
+            - type: "string"
+            - type: "object"
+              properties:
+                id:
+                  type: "string"
+                key:
+                  type: "any"
+                  nullable: true
+        issuanceDate:
+          type: "string"
+          description: "ISO8601 Date String of the time the Verifiable Credential is issued."
+        proof:
+          description: "One or more Linked Data Proofs that can be used to detect tampering and verify the authorship of a credential"
+          allOf:
+            - $ref: "#/components/schemas/SwaggerAnnotatedLinkedDataProof"
+        expirationDate:
+          type: "string"
+          description: "ISO8601 Date String of the point in time from where on the Verifiable Credential will be expired."
+      required:
+        - "@context"
+        - "type"
+        - "credentialSubject"
+        - "issuer"
+        - "issuanceDate"
+    SwaggerAnnotatedVerifiablePresentation:
+      type: "object"
+      properties:
+        context:
+          type: "array"
+          description: "The set of context for a Verifiable Presentation. W3C: \"The value of the type property MUST be, or map to (through interpretation of the @context property), one or more URIs.\""
+          items:
+            type: "string"
+        holder:
+          type: "string"
+          description: "A credential issued to a holder who is not the (only) subject of the credential, who has no relationship with the subject of the credential, but who has a relationship with the issuer"
+        type:
+          type: "array"
+          description: "The type of a Verifiable Presentation. Has to consist of one or more URIs."
+          items:
+            type: "string"
+        verifiableCredential:
+          description: "Array of Verifiable Credentials to create the Presentation for. Values are provided either as JWT String or Verifiable Credential"
+          oneOf:
+            - type: "array"
+              items:
+                type: "string"
+            - type: "array"
+              items:
+                $ref: "#/components/schemas/SwaggerAnnotatedVerifiableCredential"
+        proof:
+          description: "One or more Linked Data Proofs that can be used to detect tampering and verify the authorship of a presentation"
+          allOf:
+            - $ref: "#/components/schemas/SwaggerAnnotatedLinkedDataProof"
+        expirationDate:
+          type: "string"
+          description: "ISO8601 Date String of the point in time from where on the Verifiable Presentation will be expired."
+      required:
+        - "@context"
+        - "type"
+        - "verifiableCredential"
+        - "proof"

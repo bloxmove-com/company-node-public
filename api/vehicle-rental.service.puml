@@ -1,0 +1,149 @@
+@startuml
+class VehicleAlreadyBooked extends ConflictException
+class VehicleAlreadyReleased extends ConflictException
+class BloxmoveTompGatewayService {
+    -bloxmoveTompGatewayBaseUrl: string
+    -logger: Logger
+    -config: ConfigService
+    -httpService: HttpService
+    +requestBooking(assetId: string): Promise<IVehicleContractData>
+    +confirmBooking(bookingId: string): Promise<void>
+    +endBooking(bookingId: string): Promise<IUsageData>
+    +changeDoorStatus(bookingId: string, doorStatus: DoorStatus): Promise<void>
+    +getTompServiceCatalog(): Promise<IServiceCatalogEntry[]>
+}
+class FleetBackendService {
+    -logger: Logger
+    -fleetbackendBaseUrl: string
+    -tenantId: string
+    -availableBackfillPackages: Map<number, IVehicleServiceAggregator>
+    -generatedResalePackages: Map<number, IServicePackage>
+    -vehicleDIDToEndPoint: Map<string, string>
+    -apiType: string
+    -httpService: HttpService
+    -config: ConfigService
+    -assetService: AssetService
+    -schedulerRegistry: SchedulerRegistry
+    -bloxmoveTompGatewayService: BloxmoveTompGatewayService
+    +onApplicationBootstrap(): Promise<void>
+    +updateBackfillPackages(): Promise<void>
+    +getServiceCatalog(): Promise<IServiceCatalogEntry[]>
+    +getServiceCatalogFromBackendRequest(withConvertToDID: boolean): Promise<IServiceCatalogEntry[]>
+    -extractVehicleDIDFromVin(entries: IServiceCatalogEntry[]): Promise<IServiceCatalogEntry[]>
+    -setVehicleStatusToBookedRequest(vin: string, packageId: number): Promise<void>
+    -getVehicleStatusRequest(vin: string): Promise<IVehicleStatus>
+    -releaseVehicleRequest(vin: string): Promise<IUsageData>
+    -setTelematicsDataRequest(vin: string, telematicsData: ITelematicsRecord): Promise<void>
+    +getRentalRelevantDataFromFleetBackend(vin: string, packageId: number): Promise<IVehicleContractData>
+    +bookVehicle(vehicleDID: string, packageId: number): Promise<void>
+    +releaseVehicle(vehicleDID: string): Promise<IUsageData>
+    +addTelematicData(vin: string, telematicData: ITelematicsRecord): Promise<void>
+    -determinePackageId(providerAndVehicleDID: string, providerPackageId: number): number
+    -generateAndMergeResaleServiceCatalog(entries: IServiceCatalogEntry[]): void
+    -generateServiceCatalogEntries(vehicleDIDToGeneratedPackageIds: any, entries: IServiceCatalogEntry[]): void
+    +getLoginToken(): Promise<any>
+    +getFleetBackendRequestOptions(body?: any): Promise<any>
+    +getResalePackage(generatedPackageId: number): IServicePackage
+    +getBackfillPackage(packageId: number): IVehicleServiceAggregator
+    +getFleetNodeUrl(vehicleDID: string): Promise<string>
+    +setBackfillPackageBooked(packageId: number): void
+    -hashCode(s: string): number
+}
+class AccessTokenResponse {
+    +endpoint: string
+    +verifiableCredentials: (string | VerifiableCredential)[]
+}
+class RentalRequest {
+    +vehicleDID: string
+    +consumerDID: string
+    +packageId: number
+    +verifiablePresentation: string | VerifiablePresentation
+}
+class RentalConfirmation {
+    +contractDID: string
+    +verifiableCredential: string | VerifiableCredential
+}
+class WrongPackageData extends ForbiddenException
+abstract class SettlementService {
+    +{abstract} registerForSettlement(): Promise<void>
+    +{abstract} registerAsset(assetDID: string): Promise<void>
+    +{abstract} createAndStartAgreement(contractData: IVehicleContractData, contractDID: string): Promise<string>
+    +{abstract} endAgreement(agreementId: string, usageData: IUsageData): Promise<void>
+    +{abstract} settleAgreement(agreementId: string): Promise<void>
+}
+class ConsumerTopicsAttestationFailedException extends ForbiddenException
+class FlowWrongStatus extends HttpException
+class InvalidAccessToken extends ForbiddenException
+class RentalHelperService {
+    -logger: Logger
+    -ourDID: any
+    -apiType: any
+    +offerConfirm: "/offerConfirm"
+    +consumerConfirm: "/consumerConfirm"
+    +providerConfirm: "/providerConfirm"
+    +consumerAccessTokenRequest: "/consumerAccessTokenRequest"
+    +consumerEndRequest: "/consumerEndRequest"
+    +providerEndConfirm: "/providerEndConfirm"
+    +consumerEndConfirm: "/consumerEndConfirm"
+    -config: ConfigService
+    -assetService: AssetService
+    +checkFlowStatus(assetDID: string, status: string, consumerDID?: string): Promise<void>
+    +checkConsumerVerifiableCredentials(contractData: IVehicleContractData, consumerVCs: VerifiableCredential[]): Promise<void>
+    +verifyVerifiableCredentialChain(verifiableCredentials: VerifiableCredential[], expectedSignerDID: string): Promise<VerifiableCredential>
+    -checkIfAttestationExist(assetDID: string, topic: string, issuerDID: string): Promise<boolean>
+    -verifyExpirationDate(verifiableCredential: VerifiableCredential): void
+    +waitForVerification(assetDID: string, topic: string, issuerDID: string): Promise<void>
+    +getDataPropertyFromContract(contractDID: string, key: string, assetType: string): Promise<any>
+    +waitForDataPropertyInContractAsset(assetDID: string, key: string): Promise<any>
+    +isOwnerOf(expectedOwnerDID: string, assetDID: string): Promise<boolean>
+    +verifyInvolvementAndGetReferencedContractDID(ourDID: string, contractDID: string): Promise<string>
+    +getContractData(contractDID: any): Promise<IVehicleContractData>
+    -sleep(milliseconds: number): Promise<unknown>
+    +checkIsMyVehicle(vehicleDID: string): Promise<boolean>
+}
+class BackfillHttpService {
+    -logger: Logger
+    -httpService: HttpService
+    +sendRentalRequestToExternalFleetNode(fleetNodeUrl: string, rentalRequest: IRentalRequest): Promise<IContractDID>
+    +sendRentalConfirmationToExternalFleetNode(fleetNodeUrl: string, rentalConfirmation: IRentalConfirmation): Promise<void>
+    +sendRentalEndRequestToExternalFleetNode(fleetNodeUrl: string, rentalEndRequest: IRentalEndRequest): Promise<IUsageData>
+    +sendRentalEndConfirmationToExternalFleetNode(fleetNodeUrl: string, rentalEndConfirmation: IRentalConfirmation): Promise<IUsageData>
+    +getAccessTokenFromExternalFleetNode(fleetNodeUrl: string, contractDID: string, verifiablecredential: string): Promise<IAccessTokenResponse>
+}
+class VehicleRentalService {
+    -logger: Logger
+    -ourDID: any
+    -apiType: any
+    -ownFleetNodeUrl: any
+    +offerConfirm: "/offerConfirm"
+    +consumerConfirm: "/consumerConfirm"
+    +providerConfirm: "/providerConfirm"
+    +consumerAccessTokenRequest: "/consumerAccessTokenRequest"
+    +consumerEndRequest: "/consumerEndRequest"
+    +providerEndConfirm: "/providerEndConfirm"
+    +consumerEndConfirm: "/consumerEndConfirm"
+    -config: ConfigService
+    -assetService: AssetService
+    -fleetBackendService: FleetBackendService
+    -bloxmoveTompGatewayService: BloxmoveTompGatewayService
+    -rentalHelperService: RentalHelperService
+    -settlementService: SettlementService
+    -backfillHttpService: BackfillHttpService
+    +onApplicationBootstrap(): Promise<void>
+    +startRental(rentalRequest: IRentalRequest): Promise<string>
+    +completeStart(rentalConfirmation: IRentalConfirmation): Promise<void>
+    +endRental(rentalEndRequest: IRentalEndRequest): Promise<IUsageData>
+    +completeEnd(rentalEndConfirmation: IRentalConfirmation): Promise<void>
+    -startDirectRental(vin: string, packageId: number, consumerDID: string, vehicleDID: string, consumerVCs: VerifiableCredential[]): Promise<string>
+    -startBackfillRental(packageId: number, consumerDID: string, backfillPackage: IVehicleServiceAggregator, consumerVCs: VerifiableCredential[]): Promise<string>
+    +getAccessToken(authHeader: any, contractDID: string): Promise<AccessTokenResponse>
+    +verifyAccessTokenAndUpdateTompLeg(doorStatusUpdateRequest: IDoorStatusUpdateRequest): Promise<void>
+}
+FleetBackendService --> "1" BloxmoveTompGatewayService
+VehicleRentalService --> "1" FleetBackendService
+VehicleRentalService --> "1" BloxmoveTompGatewayService
+VehicleRentalService --> "1" RentalHelperService
+VehicleRentalService --> "1" SettlementService
+VehicleRentalService --> "1" BackfillHttpService
+VehicleRentalService --> "1" AccessTokenResponse
+@enduml

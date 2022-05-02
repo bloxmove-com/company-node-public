@@ -1,0 +1,6 @@
+apiVersion: v1
+name: fleet-node
+version: 0.0.1
+description: Helm chart for the Mobility Blockchain Platform Fleet Node
+sources:
+- git@github.com:bloxmove-com/fleet-node.git

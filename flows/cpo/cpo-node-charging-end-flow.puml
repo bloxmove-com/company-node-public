@@ -1,0 +1,201 @@
+@startuml CPO-Node-Charge-End-Flow
+autonumber
+ 
+participant "Switchboard (Wallet User)" as SWI
+participant "Customer" as CUS
+participant "EV Charging App" as APP
+participant "EV-Dashboard" as EVD
+participant "CPO-Backend" as CPB
+participant "CPO-Node" as CPN
+participant "CPO-SSI-Wallet" as SSI
+participant "Asset-Library (EWB)" as EWB
+participant "Financial Engine" as FIE
+
+
+== Authorization Charging-End ==
+
+CUS -> APP: Request charging end
+APP -> EVD: Request charging end
+EVD -> CPB: Request charging end
+
+CPB -> CPN: authorize end-session
+note right
+ISession {
+  country_code: string
+  party_id: string
+  location_id: string
+  evse_uid: string
+  connector_id: string
+  kwh: string
+}
+
+IToken {
+  uid: string
+}
+
+ContractDID {
+  chargingContractDID: string
+}
+
+end note
+note left #FFAAAA
+ToDo LamA -> send session to cpo-node: /charge-end-session-authorize
+end note
+
+CPN -> SSI: request presentation invitation
+note right
+--> /vc-api/exchanges 
+
+exchangeId = chargingContractDID+end ("end" because two same exchangeIds for start and end is not possible)
+
+show user contractDID, EVSE ID, kwh, current time stamp
+
+{
+  exchangeId: <chargingContractDID>
+  interactServices: tbd (John)
+  query: tbd (John)   
+  isOneTime: true
+  callback : {"url": "https://cpo-node-url/charge-end-session-authorization-callback" }
+}
+
+end note
+CPN -> EVD: send presentation invitation + token.uid
+note right
+Swagger: https://rebeam-dev-backend.energyweb.org/api/spec/#/Presentation/PresentationController_cachePresentation
+POST https://rebeam-dev-backend.energyweb.org/api/presentation
+{
+  "presentationLink": {
+    "type": "string",
+    "url": "https://lama-ssi-server/rebeam/vc-api/exchanges/{exchangeId}",
+    "ssiSession": ""
+  },
+  "ocpiTokenUID": "string"
+}
+
+end note
+CPN -> EWB: setAttestation /consumerEndRequest for chargingContractDID
+EVD -> APP: notify of presentation invitation
+
+APP -> SWI: presentation invitation
+
+SWI -> SSI: presentation proposal--> https://lama-ssi-server/rebeam/vc-api/exchanges/{exchangeId}
+SSI --> SWI: receive proposal
+
+
+SWI -> CUS: ask for signature to make VP
+note right
+signature that the customer is
+willing to end the session
+end note
+SWI -> SSI: send VP
+
+
+SSI -> CPN: receive VP (endpoint in cpo-node: /charge-end-session-authorization-callback)
+note left
+{
+  "exchangeId",
+  "transactionId",
+  "vpRequest"
+  "presentationSubmission": {
+    "verificationResult"
+    "vp"
+  }
+}
+end note
+
+CPN -> CPN: CPO-Node checks the incoming VP.
+note left
+- customer VC ok ?
+  - contractId
+  - charge-end intent 
+end note
+
+CPN -> CPB: successful authorization, charging session can end
+note left #FFAAAA
+
+LamA check if signed kwh data is within range of actual data
+ToDo LamA -> create endpoint: /end-confirmation
+{
+  contractDID: string
+  signedKwh: string
+}
+end note
+
+CPN -> EWB: setAttestation /consumerEndConfirm for chargingContractDID
+
+== End charging == 
+
+CPB -> CPN: session + CDR + contractDID
+note left #FFAAAA
+ToDo LamA -> send session + CDR to cpo-node: /charge-session-end
+end note
+note right
+ISession {
+  country_code: string;
+  party_id: string;
+  id: string;
+  start_date_time: string;
+  end_date_time?: string;
+  kwh: number;
+  cdr_token: ICdrToken;
+  auth_method: authMethod;
+  authorization_reference?: string;
+  location_id: string;
+  evse_uid: string;
+  connector_id: string;
+  meter_id?: string;
+  currency: string;
+  charging_periods?: IChargingPeriod[];
+  total_cost?: IPrice;
+  status: sessionStatus;
+  last_updated: string;
+}
+
+IChargeDetailRecord {
+  country_code: string;
+  party_id: string;
+  id: string;
+  start_date_time: string;
+  end_date_time: string;
+  session_id?: string;
+  cdr_token: ICdrToken;
+  auth_method: authMethod;
+  authorization_reference?: string;
+  cdr_location: ICdrLocation;
+  meter_id?: string;
+  currency: string;
+  tariffs?: ITariff[];
+  charging_periods: IChargingPeriod[];
+  signed_data?: ISignedData;
+  total_cost: IPrice;
+  total_fixed_cost?: IPrice;
+  total_energy: number;
+  total_energy_cost?: IPrice;
+  total_time: number;
+  total_time_cost?: IPrice;
+  total_parking_time?: number;
+  total_parking_cost?: IPrice;
+  total_reservation_cost?: IPrice;
+  remark?: string;
+  invoice_reference_id?: string;
+  credit?: boolean;
+  credit_reference_id?: string;
+  last_updated: string;
+}
+ContractDID {
+  chargingContractDID: string
+}
+end note
+
+CPN -> CPN: create verifiable invoices (JWT + VC) with CDR + sessionEndData (includes the time-series)
+CPN -> EWB: createDataProperty for chargingContractDID with invoiceData & save in IPFS
+
+CPN -> EVD: send verifiable invoices to ev-dashboard
+
+CPN -> FIE: send verifiable invoices to financial engine (Corda)
+
+CPN -> EWB: setAttestation /providerEndConfirm for chargingContractDID
+
+CPN --> CPB: ok
+
+@enduml

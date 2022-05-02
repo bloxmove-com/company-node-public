@@ -1,0 +1,17 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 11 - Crawl and cache Service Catalogs
+
+group executed regularly or on demand
+ServiceCatalogAggregator -> EthereumDIDRegistryContract : get URLs of fleet nodes (list of DIDs)
+EthereumDIDRegistryContract [dashed]-> ServiceCatalogAggregator : URLs
+ServiceCatalogAggregator -> FleetNodeA : get service catalog 
+FleetNodeA [dashed]-> ServiceCatalogAggregator : service catalog
+ServiceCatalogAggregator -> FleetNodeB : get service catalog 
+FleetNodeB [dashed]-> ServiceCatalogAggregator : service catalog
+ServiceCatalogAggregator -> ServiceCatalogAggregator : store/cache aggregated service catalogs with their fleet owner DID and fleet node
+end
+@enduml

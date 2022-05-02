@@ -1,0 +1,34 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 22 - B2C + B2B Backfill - Update Door Status
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+
+F2SApp -> F2SApp : biometrics check to unlock private key
+F2SApp [#green]-> FleetNodeA : 22.1 request access token(B2C contractDID, VC)
+FleetNodeA -> FleetBackendA : check if own vehicle
+FleetBackendA [dashed]-> FleetNodeA : no
+FleetNodeA -> AttestationContract : verify/check contract data, status and verifications (incl. B2B contract)
+FleetNodeA -> RentalAssetContractB2B : 
+FleetNodeA -> RentalAssetContractB2C : 
+AttestationContract [dashed]-> FleetNodeA : 
+FleetNodeA [#green]-> FleetNodeB : request access token(B2C contractDID, companyVC)
+FleetNodeB -> AttestationContract : verify/check contract data, status and verifications
+AttestationContract [dashed]-> FleetNodeB : 
+FleetNodeB -> FleetNodeB : create access token (VC) for vehicleDID, B2B contractDID, Fleet A DID signed by Fleet B2B
+FleetNodeB [dashed]-> FleetNodeA : B2B access token, car wallet endpoint
+FleetNodeA -> FleetNodeA : add access token (VC) for vehicleDID, B2C contract DID, user DID signed by Fleet A
+FleetNodeA [dashed]-> F2SApp : access token (VCs), car wallet endpoint
+F2SApp [#green]-> VirtualCarWallet : 22.2 request door open/close (VP of access token signed with user wallet)
+VirtualCarWallet -> VirtualCarWallet : validate chain of access tokens: check signature of user, Fleet A and Fleet B, check correct delegation path, check expiration
+VirtualCarWallet -> FleetBackendB : update telematics data incl. door status (via fleet node)
+VirtualCarWallet [dashed]-> F2SApp : ok
+@enduml

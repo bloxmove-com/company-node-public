@@ -1,0 +1,465 @@
+openapi: "3.0.0"
+paths:
+  /:
+    get:
+      operationId: "AppController_isRunning"
+      parameters: []
+      responses:
+        200:
+          description: ""
+  /charge-session-authorize:
+    post:
+      operationId: "VehicleChargingController_authorizeChargeSession"
+      summary: ""
+      description: "Receive the CPO-Backend request and trigger the authorization process to start the charge session"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorizationRequest"
+      responses:
+        201:
+          description: "ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContractDID"
+      tags:
+        - "charging"
+  /charge-session-authorization-callback:
+    post:
+      operationId: "VehicleChargingController_chargeAuthorizationCallback"
+      summary: ""
+      description: "Receive the charge session start VP from the SSI-Wallet and validate it, inform the CPO-Backend if successful"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorizationCallback"
+      responses:
+        201:
+          description: "ok"
+      tags:
+        - "charging"
+  /charge-end-session-authorize:
+    post:
+      operationId: "VehicleChargingController_authorizeEndSession"
+      summary: ""
+      description: "Receive the CPO-Backend request and trigger the authorization process to end the charge session"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorizationEndRequest"
+      responses:
+        201:
+          description: "ok"
+      tags:
+        - "charging"
+  /charge-end-session-authorization-callback:
+    post:
+      operationId: "VehicleChargingController_chargeEndAuthorizationCallback"
+      summary: ""
+      description: "Receive the charge session end VP from the SSI-Wallet and validate it, inform the CPO-Backend if successful"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthorizationCallback"
+      responses:
+        201:
+          description: "ok"
+      tags:
+        - "charging"
+  /charge-session-start:
+    post:
+      operationId: "VehicleChargingController_chargingStart"
+      summary: ""
+      description: "Receive start session from the CPO-Backend and set charging-start attestation"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChargingStartRequest"
+      responses:
+        201:
+          description: "ok"
+      tags:
+        - "charging"
+  /charge-session-update:
+    post:
+      operationId: "VehicleChargingController_chargingUpdate"
+      summary: ""
+      description: "Receive update sessions from the CPO-Backend"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChargingUpdateRequest"
+      responses:
+        201:
+          description: "ok"
+      tags:
+        - "charging"
+  /charge-session-end:
+    post:
+      operationId: "VehicleChargingController_chargingEnd"
+      summary: ""
+      description: "Receive the end session from the CPO-Backend and CDR, create verifiable invoice + set charging-end attestation"
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChargingEndRequest"
+      responses:
+        201:
+          description: "ok"
+      tags:
+        - "charging"
+info:
+  title: "CPO-Node"
+  description: "The CPO-Node API description."
+  version: "2.0.4"
+  contact: {}
+tags: []
+servers:
+  - url: "/"
+components:
+  schemas:
+    Token:
+      type: "object"
+      properties:
+        uid:
+          type: "string"
+      required:
+        - "uid"
+    AuthorizationSession:
+      type: "object"
+      properties:
+        country_code:
+          type: "string"
+        party_id:
+          type: "string"
+        id:
+          type: "string"
+        start_date_time:
+          type: "string"
+        location_id:
+          type: "string"
+        evse_uid:
+          type: "string"
+        connector_id:
+          type: "string"
+        kwh:
+          type: "string"
+      required:
+        - "country_code"
+        - "party_id"
+        - "location_id"
+        - "evse_uid"
+        - "connector_id"
+    AuthorizationRequest:
+      type: "object"
+      properties:
+        token:
+          $ref: "#/components/schemas/Token"
+        session:
+          $ref: "#/components/schemas/AuthorizationSession"
+      required:
+        - "token"
+        - "session"
+    ContractDID:
+      type: "object"
+      properties:
+        contractDID:
+          type: "string"
+      required:
+        - "contractDID"
+    VerificationResult:
+      type: "object"
+      properties:
+        checks:
+          type: "array"
+          items:
+            type: "string"
+        warnings:
+          type: "array"
+          items:
+            type: "string"
+        errors:
+          type: "array"
+          items:
+            type: "string"
+      required:
+        - "checks"
+        - "warnings"
+        - "errors"
+    PresentationSubmission:
+      type: "object"
+      properties:
+        verificationResult:
+          $ref: "#/components/schemas/VerificationResult"
+        vp:
+          type: "object"
+      required:
+        - "verificationResult"
+        - "vp"
+    AuthorizationCallback:
+      type: "object"
+      properties:
+        transactionId:
+          type: "string"
+        exchangeId:
+          type: "string"
+        vpRequest:
+          type: "object"
+        presentationSubmission:
+          $ref: "#/components/schemas/PresentationSubmission"
+      required:
+        - "transactionId"
+        - "exchangeId"
+        - "vpRequest"
+        - "presentationSubmission"
+    AuthorizationEndRequest:
+      type: "object"
+      properties:
+        token:
+          $ref: "#/components/schemas/Token"
+        session:
+          $ref: "#/components/schemas/AuthorizationSession"
+        contractDID:
+          type: "string"
+      required:
+        - "token"
+        - "session"
+        - "contractDID"
+    Session:
+      type: "object"
+      properties:
+        country_code:
+          type: "string"
+        party_id:
+          type: "string"
+        id:
+          type: "string"
+        start_date_time:
+          type: "string"
+        location_id:
+          type: "string"
+        evse_uid:
+          type: "string"
+        connector_id:
+          type: "string"
+        end_date_time:
+          type: "string"
+        kwh:
+          type: "number"
+        cdr_token:
+          type: "object"
+        auth_method:
+          type: "string"
+        authorization_reference:
+          type: "string"
+        meter_id:
+          type: "string"
+        currency:
+          type: "string"
+        charging_periods:
+          type: "array"
+          items:
+            type: "object"
+        total_cost:
+          type: "object"
+        status:
+          type: "string"
+        last_updated:
+          type: "string"
+      required:
+        - "country_code"
+        - "party_id"
+        - "id"
+        - "start_date_time"
+        - "location_id"
+        - "evse_uid"
+        - "connector_id"
+        - "kwh"
+        - "cdr_token"
+        - "auth_method"
+        - "currency"
+        - "status"
+        - "last_updated"
+    VerifiablePresentation:
+      type: "object"
+      properties: {}
+    ChargingStartRequest:
+      type: "object"
+      properties:
+        session:
+          $ref: "#/components/schemas/Session"
+        contractDID:
+          type: "string"
+        vp:
+          $ref: "#/components/schemas/VerifiablePresentation"
+      required:
+        - "session"
+        - "contractDID"
+    SessionUpdate:
+      type: "object"
+      properties:
+        country_code:
+          type: "string"
+        party_id:
+          type: "string"
+        id:
+          type: "string"
+        start_date_time:
+          type: "string"
+        location_id:
+          type: "string"
+        evse_uid:
+          type: "string"
+        connector_id:
+          type: "string"
+        end_date_time:
+          type: "string"
+        kwh:
+          type: "number"
+        cdr_token:
+          type: "object"
+        auth_method:
+          type: "string"
+        authorization_reference:
+          type: "string"
+        meter_id:
+          type: "string"
+        currency:
+          type: "string"
+        charging_periods:
+          type: "array"
+          items:
+            type: "object"
+        total_cost:
+          type: "object"
+        status:
+          type: "string"
+        last_updated:
+          type: "string"
+    ChargingUpdateRequest:
+      type: "object"
+      properties:
+        session:
+          $ref: "#/components/schemas/SessionUpdate"
+        contractDID:
+          type: "string"
+        vp:
+          $ref: "#/components/schemas/VerifiablePresentation"
+      required:
+        - "session"
+        - "contractDID"
+    ChargeDetailRecord:
+      type: "object"
+      properties:
+        country_code:
+          type: "string"
+        party_id:
+          type: "string"
+        id:
+          type: "string"
+        start_date_time:
+          type: "string"
+        end_date_time:
+          type: "string"
+        session_id:
+          type: "string"
+        cdr_token:
+          type: "object"
+        auth_method:
+          type: "string"
+        authorization_reference:
+          type: "string"
+        cdr_location:
+          type: "object"
+        meter_id:
+          type: "string"
+        currency:
+          type: "string"
+        tariffs:
+          type: "object"
+        charging_periods:
+          type: "array"
+          items:
+            type: "object"
+        signed_data:
+          type: "object"
+        total_cost:
+          type: "object"
+        total_fixed_cost:
+          type: "object"
+        total_energy:
+          type: "number"
+        total_energy_cost:
+          type: "object"
+        total_time:
+          type: "number"
+        total_time_cost:
+          type: "object"
+        total_parking_time:
+          type: "number"
+        total_parking_cost:
+          type: "object"
+        total_reservation_cost:
+          type: "object"
+        remark:
+          type: "string"
+        invoice_reference_id:
+          type: "string"
+        credit:
+          type: "boolean"
+        credit_reference_id:
+          type: "string"
+        last_updated:
+          type: "string"
+      required:
+        - "country_code"
+        - "party_id"
+        - "id"
+        - "start_date_time"
+        - "end_date_time"
+        - "cdr_token"
+        - "auth_method"
+        - "cdr_location"
+        - "currency"
+        - "charging_periods"
+        - "total_cost"
+        - "total_energy"
+        - "total_time"
+        - "last_updated"
+    ChargingEndRequest:
+      type: "object"
+      properties:
+        session:
+          $ref: "#/components/schemas/Session"
+        chargeDetailRecord:
+          $ref: "#/components/schemas/ChargeDetailRecord"
+        contractDID:
+          type: "string"
+        vp:
+          $ref: "#/components/schemas/VerifiablePresentation"
+      required:
+        - "session"
+        - "chargeDetailRecord"
+        - "contractDID"

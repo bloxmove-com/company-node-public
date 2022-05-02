@@ -1,0 +1,53 @@
+@startuml
+class VehicleAlreadyBooked extends ConflictException
+class VehicleAlreadyReleased extends ConflictException
+class BloxmoveTompGatewayService {
+    -bloxmoveTompGatewayBaseUrl: string
+    -logger: Logger
+    -config: ConfigService
+    -httpService: HttpService
+    +requestBooking(assetId: string): Promise<IVehicleContractData>
+    +confirmBooking(bookingId: string): Promise<void>
+    +endBooking(bookingId: string): Promise<IUsageData>
+    +changeDoorStatus(bookingId: string, doorStatus: DoorStatus): Promise<void>
+    +getTompServiceCatalog(): Promise<IServiceCatalogEntry[]>
+}
+class FleetBackendService {
+    -logger: Logger
+    -fleetbackendBaseUrl: string
+    -tenantId: string
+    -availableBackfillPackages: Map<number, IVehicleServiceAggregator>
+    -generatedResalePackages: Map<number, IServicePackage>
+    -vehicleDIDToEndPoint: Map<string, string>
+    -apiType: string
+    -httpService: HttpService
+    -config: ConfigService
+    -assetService: AssetService
+    -schedulerRegistry: SchedulerRegistry
+    -bloxmoveTompGatewayService: BloxmoveTompGatewayService
+    +onApplicationBootstrap(): Promise<void>
+    +updateBackfillPackages(): Promise<void>
+    +getServiceCatalog(): Promise<IServiceCatalogEntry[]>
+    +getServiceCatalogFromBackendRequest(withConvertToDID: boolean): Promise<IServiceCatalogEntry[]>
+    -extractVehicleDIDFromVin(entries: IServiceCatalogEntry[]): Promise<IServiceCatalogEntry[]>
+    -setVehicleStatusToBookedRequest(vin: string, packageId: number): Promise<void>
+    -getVehicleStatusRequest(vin: string): Promise<IVehicleStatus>
+    -releaseVehicleRequest(vin: string): Promise<IUsageData>
+    -setTelematicsDataRequest(vin: string, telematicsData: ITelematicsRecord): Promise<void>
+    +getRentalRelevantDataFromFleetBackend(vin: string, packageId: number): Promise<IVehicleContractData>
+    +bookVehicle(vehicleDID: string, packageId: number): Promise<void>
+    +releaseVehicle(vehicleDID: string): Promise<IUsageData>
+    +addTelematicData(vin: string, telematicData: ITelematicsRecord): Promise<void>
+    -determinePackageId(providerAndVehicleDID: string, providerPackageId: number): number
+    -generateAndMergeResaleServiceCatalog(entries: IServiceCatalogEntry[]): void
+    -generateServiceCatalogEntries(vehicleDIDToGeneratedPackageIds: any, entries: IServiceCatalogEntry[]): void
+    +getLoginToken(): Promise<any>
+    +getFleetBackendRequestOptions(body?: any): Promise<any>
+    +getResalePackage(generatedPackageId: number): IServicePackage
+    +getBackfillPackage(packageId: number): IVehicleServiceAggregator
+    +getFleetNodeUrl(vehicleDID: string): Promise<string>
+    +setBackfillPackageBooked(packageId: number): void
+    -hashCode(s: string): number
+}
+FleetBackendService --> "1" BloxmoveTompGatewayService
+@enduml

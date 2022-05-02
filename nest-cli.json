@@ -1,0 +1,30 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/fleet-node-v1/src",
+  "monorepo": true,
+  "root": "apps/fleet-node-v1",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/fleet-node-v1/tsconfig.app.json"
+  },
+  "projects": {
+    "fleet-node-v1": {
+      "type": "application",
+      "root": "apps/fleet-node-v1",
+      "entryFile": "main",
+      "sourceRoot": "apps/fleet-node-v1/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/fleet-node-v1/tsconfig.app.json"
+      }
+    },
+    "cpo-node": {
+      "type": "application",
+      "root": "apps/cpo-node",
+      "entryFile": "main",
+      "sourceRoot": "apps/cpo-node/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/cpo-node/tsconfig.app.json"
+      }
+    }
+  }
+}

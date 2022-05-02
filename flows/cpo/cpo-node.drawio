@@ -1,0 +1,261 @@
+<mxfile host="65bd71144e">
+    <diagram id="2934UtpTBMGg7UP6Hbqb" name="Page-1">
+        <mxGraphModel dx="2029" dy="2525" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="42" value="Company Node" style="rounded=0;whiteSpace=wrap;html=1;align=left;horizontal=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="1200" y="-510" width="850" height="1200" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" value="Fleet-Node" style="rounded=0;whiteSpace=wrap;html=1;align=left;horizontal=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="1330" y="-400" width="630" height="630" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="77">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1710" y="10" as="sourcePoint"/>
+                        <mxPoint x="1700" y="260" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="2" value="CPO-Node" style="rounded=0;whiteSpace=wrap;html=1;align=left;horizontal=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="340" width="520" height="360" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="14" target="15">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="&amp;lt;abstract&amp;gt; &lt;br&gt;DomainSpecProcService&lt;br&gt;+onApplicationBootstrap" style="rounded=0;whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="370" width="160" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=block;endFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="3" target="14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="VehicleChargingService&lt;br&gt;&lt;br&gt;+authorizeCustomer" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="490" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="" style="edgeStyle=none;html=1;" parent="1" source="5" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="VehicleChargingController" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="520" width="160" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Asset-Library" style="rounded=0;whiteSpace=wrap;html=1;align=left;horizontal=1;verticalAlign=top;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="730" width="520" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="AssetService&lt;br&gt;&lt;br&gt;+createAsset&lt;br&gt;+createVerifiableCredential&lt;br&gt;+createDataProperty&lt;br&gt;+setName&lt;br&gt;+resolveName&lt;br&gt;+setAttestation" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="170" y="770" width="210" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="14" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="400" y="410" as="targetPoint"/>
+                        <mxPoint x="470" y="390" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="680" y="415"/>
+                            <mxPoint x="680" y="750"/>
+                            <mxPoint x="505" y="750"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="12" value="VerifiableInvoiceService&lt;br&gt;&lt;br&gt;+create" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="770" width="210" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="14" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="470" y="390" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="680" y="415"/>
+                            <mxPoint x="680" y="750"/>
+                            <mxPoint x="275" y="750"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="14" target="16">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="470" y="390" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="680" y="415"/>
+                            <mxPoint x="680" y="940"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="SettlementService" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="520" width="140" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="ConfigService" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="920" width="210" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="CPO-Node" style="rounded=0;whiteSpace=wrap;html=1;align=left;horizontal=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="1330" y="410" width="630" height="250" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="29" target="40">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="&amp;lt;abstract&amp;gt; &lt;br&gt;DomainSpecProcService&lt;br&gt;&lt;br&gt;+onApplicationBootstrap" style="rounded=0;whiteSpace=wrap;html=1;align=center;horizontal=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1630" y="260" width="140" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=block;endFill=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="31" target="29">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=classic;endFill=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="60" target="58">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="31" target="60">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="31" target="63">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="VehicleChargingService&lt;br&gt;&lt;br&gt;+authorizeCustomer" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1630" y="460" width="140" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="70" target="31">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1550" y="515.0000000000005" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="34" value="Asset-Library" style="rounded=0;whiteSpace=wrap;html=1;align=left;horizontal=1;verticalAlign=top;dashed=1;" vertex="1" parent="1">
+                    <mxGeometry x="1320" y="730" width="730" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="AssetService&lt;br&gt;&lt;br&gt;+createAsset&lt;br&gt;+createVerifiableCredential&lt;br&gt;+createDataProperty&lt;br&gt;+setName&lt;br&gt;+resolveName&lt;br&gt;+setAttestation" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1480" y="770" width="210" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="29" target="37">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1710" y="410" as="targetPoint"/>
+                        <mxPoint x="1780" y="390" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="1990" y="305"/>
+                            <mxPoint x="1990" y="750"/>
+                            <mxPoint x="1815" y="750"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="37" value="VerifiableInvoiceService&lt;br&gt;&lt;br&gt;+create" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1710" y="770" width="210" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="29" target="35">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1780" y="390" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="1990" y="305"/>
+                            <mxPoint x="1990" y="750"/>
+                            <mxPoint x="1585" y="750"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="39" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="29" target="41">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1780" y="390" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="1990" y="305"/>
+                            <mxPoint x="1990" y="940"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="40" value="SettlementService" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1790" y="340" width="140" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="ConfigService" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1710" y="920" width="210" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=0;" edge="1" parent="1" source="44" target="29">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="44" target="48">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="44" target="52">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1780" y="-50"/>
+                            <mxPoint x="1780" y="-145"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="44" value="VehicleRentalService&lt;br&gt;&lt;br&gt;+startRental" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1630" y="-100" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0;exitDx=160;exitDy=30;exitPerimeter=0;" edge="1" parent="1" source="71" target="44">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1560" y="-50" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="1420" y="-50"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="48" value="RentalHelperService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="1800" y="-100" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="FleetBackendService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="1800" y="-170" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=0;" edge="1" parent="1" source="54" target="14">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="VehicleRentalService&lt;br&gt;&lt;br&gt;+startRental" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="320" y="220" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="TOMPBackendService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="1800" y="150" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="eMSPBackendService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1810" y="590" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="60" value="VPRequestService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1810" y="520" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="63" value="CPOBackendService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1810" y="460" width="120" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="74" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="66" target="68">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="75" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="66" target="56">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1780" y="80"/>
+                            <mxPoint x="1780" y="175"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="66" value="TOMPRentalService&lt;br&gt;&lt;br&gt;+startRental" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1630" y="30" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="TOMPHelperService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="1800" y="30" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="SSIWalletService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1810" y="620" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="VehicleChargingController" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=10;" vertex="1" parent="1">
+                    <mxGeometry x="1270" y="490" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="76" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="71" target="66">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="86" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="71" target="77">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="71" value="VehicleRentalController" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=10;" vertex="1" parent="1">
+                    <mxGeometry x="1260" y="-75" width="160" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="84" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="77" target="80">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="85" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;endArrow=classic;endFill=1;" edge="1" parent="1" source="77" target="81">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="77" value="LykoRentalService&lt;br&gt;&lt;br&gt;+startRental" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="1630" y="-300" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" value="LykoHelperService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="1800" y="-300" width="140" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="81" value="LykoBackendService" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="1800" y="-370" width="140" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="87" value="IRentalService" style="shape=card;whiteSpace=wrap;html=1;size=20;" vertex="1" parent="1">
+                    <mxGeometry x="1460" y="-75" width="100" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

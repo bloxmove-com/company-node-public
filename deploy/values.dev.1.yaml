@@ -1,0 +1,62 @@
+nodeEnv: "k8s"
+appName: "fleet-node-1"
+
+# fleet node config
+apiKey: "83jklolTL!-dev-1"
+imageURL: "069870223720.dkr.ecr.eu-central-1.amazonaws.com/blxm/fleet-node"
+accountDID: did:ethr:blxm-dev:0xac17ee9A9c05dBbBEB3eBf03D39Cd6242C57EC48
+backfillEnabled: "true"
+swaggerBasePath: /fleet-node-1
+defaultZone: STUTTGART
+accessTokenExpirationSeconds: 300
+accessTokenVcMaxFutureExpirationInSeconds: 10
+resalePackageClaims: minAge18,driverLicense
+backfillUpdateInterval: 20000
+timestampExpirationInSeconds: 10
+smartVin:
+  enabled: false
+  ownIdentity: Fleet1
+  url:
+    transferVehiclePossession: "http://fleet1.smartvin:8080/api/smartvin/vehicles/:vin/possession-transactions"
+    consumeAgreement: "http://fleet1.smartvin:8080/api/smartvin/agreements/:agreementId/consumes"
+    createAgreement: "http://fleet1.smartvin:8080/api/smartvin/agreements"
+    getAgreement: "http://fleet1.smartvin:8080/api/smartvin/agreements/:agreementId/types/:type"
+    getLiabilities: "http://fleet1.smartvin:8080/api/smartvin/liabilities"
+    payLiability: "http://fleet1.smartvin:8080/api/smartvin/liabilities/:liabilityId/payments"
+    issueCash: "http://fleet1.smartvin:8080/api/smartvin/cash"
+    issueVehicle: "http://fleet1.smartvin:8080/api/smartvin/vehicles"
+kycIssuers: "did:ethr:blxm-dev:0x76fF7A937699D5Fdc02E70B23450deF8F321d3fB,did:ont:ALgcpQyKwudRKNnCZuUYjK47mqwZrzPNQG,did:web:doorman-pre-prod.wallet.eu.spherity.io:uuid:4f7d2251f7c34e829971a1ad8c41c6d2"
+companyClaim: '''[{"@context":["https://www.w3.org/2018/credentials/v1"],"type":["VerifiableCredential","CompanyCredential"],"credentialSubject":{"id":"did:ethr:blxm-local:0xac17ee9A9c05dBbBEB3eBf03D39Cd6242C57EC48","company":true,"proofPurpose":"assertionMethod"},"issuer":"did:ethr:blxm-dev:0x76fF7A937699D5Fdc02E70B23450deF8F321d3fB","issuanceDate":"2021-11-23T11:43:28.967Z","proof":{"type":"EcdsaSecp256k1RecoveryMethod2020","proofPurpose":"assertionMethod","verificationMethod":"did:ethr:blxm-dev:0x76fF7A937699D5Fdc02E70B23450deF8F321d3fB#controller","created":"2021-11-23T11:43:28.956Z","proofValue":"0x8acf4057b0af95836f41126fb65fd905e353e189366979cdae03824a57706dec21a174b70bb22a275aa550fb4d8eb57bc671eb6e9b9219cf8200d1748453f2a71c"}}]'''
+
+# asset library config
+ontId: did:ont:AYMEqbQ2Nz3YWJvrMaMS5xA5DhKrUvLeSm
+ontPrivateKeyWIF: 
+ontPublicKeyIndex: 1
+ontNodeUrl: http://polaris1.ont.io:20334
+
+web3Provider: ws://validator1-0.besu-validator1.besu:8546
+chainId: 1000
+networkName: blxm-dev
+ipfsHost: local-ipfs.local-ipfs
+ipfsPort: 5001
+ipfsProtocol: http
+ipfsBasePath: /api/v0
+accountAddress: 0xac17ee9A9c05dBbBEB3eBf03D39Cd6242C57EC48
+accountPrivateKey: 
+didRegistryAddress: 0xc60784dE9cadec7d971175751ed3aE598AFd5CE2
+attestationRegistryAddress: 0x706f11D9E8BD114723528D8FE975bAAC7c7C61e2
+ensAddress: 0xEbCFd4584c6B56f342861039fE7cFfB87264B62c
+currentAccountDidMethod: ethr
+
+# connected endpoints
+serviceCatalogAggregatorBaseUrl: https://dev.mobilityblockchainplatform.io/service-catalog-aggregator
+serviceCatalogAggregatorApiKey: 
+
+virtualCarWalletBaseUrl: https://dev.mobilityblockchainplatform.io/virtual-car-wallet
+
+vehicleAuthorityBaseUrl: https://dev.mobilityblockchainplatform.io/vehicle-authority
+vehicleAuthorityVehicleParentDomain: vin.bloxmove
+
+fleetbackendBaseUrl: https://dev.mobilityblockchainplatform.io/fleet-backend
+fleetBackendTenantId: 1
+

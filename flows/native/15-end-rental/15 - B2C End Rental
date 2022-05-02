@@ -1,0 +1,35 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 15 - B2C End Car Rental
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+F2SApp [#green]-> FleetNode : 15.1 request end rental (contractDID, VC)
+FleetNode -> RentalAssetContract : get contract data, check flow status
+RentalAssetContract [dashed]-> FleetNode : contract data
+FleetNode [#green]-> FleetNode : validate user VC
+FleetNode [#blue]-> AttestationContract : validate attestations for contract
+AttestationContract [dashed]-> FleetNode :
+FleetNode -> FleetBackend : release vehicle
+FleetBackend [dashed]-> FleetNode : usage data (time, distance, price)
+FleetNode [dashed]-> F2SApp : usage data
+FleetNode -> RentalAssetContract : set usage data
+FleetNode [#blue]-> AttestationContract : setAttestation(contractDID, '/providerEndConfirm', VC)
+F2SApp [#green]-> FleetNode : 15.2 complete end rental (contractDID, VC)
+FleetNode -> RentalAssetContract : get contract & usage data
+RentalAssetContract [dashed]-> FleetNode : contract & usage data
+FleetNode [#blue]-> AttestationContract : check attestations for contractDID
+AttestationContract [dashed]-> FleetNode : 
+FleetNode [#blue]-> AttestationContract : setAttestation(contractDID, '/consumerEndConfirm', VC)
+FleetNode -> FleetOwnerSmartVinNode : consumer agreement(agreement id, rentalPayload)
+FleetNode -> FleetOwnerSmartVinNode : vehicle posession transfer(VIN, from: customer node, to: fleet owner, liability)
+FleetOwnerSmartVinNode <[dashed]-> CustomerSmartVinNode :
+FleetNode [dashed]-> F2SApp : ok
+@enduml

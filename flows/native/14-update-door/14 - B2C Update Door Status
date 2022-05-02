@@ -1,0 +1,28 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 14 - B2C Update Door Status
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+
+F2SApp -> F2SApp : biometrics check to unlock wallet
+F2SApp [#green]-> FleetNode : 14.1 request access token (contractDID, VC)
+FleetNode -> RentalAssetContract : get contract data
+RentalAssetContract [dashed]-> FleetNode : contract data
+FleetNode [#green]-> FleetNode : validate user VC
+FleetNode [#blue]-> AttestationContract : validate attestations for contract
+AttestationContract [dashed]-> FleetNode :
+FleetNode [#green]-> FleetNode : create access token(VC) for vehicleDID, consumerDID and contractDID (signed with fleetOwnerDID)
+FleetNode [#green]-> F2SApp : access token (VC), car wallet endpoint
+F2SApp [#green]-> VirtualCarWallet : 14.2 request door open/close (VP of access token signed with user wallet)
+VirtualCarWallet [#green]-> VirtualCarWallet : validate access token, check siganture of user and fleetOwner, check expiration
+VirtualCarWallet -> TelematicsGateway : trigger door open/close
+VirtualCarWallet [dashed]-> F2SApp : ok
+@enduml

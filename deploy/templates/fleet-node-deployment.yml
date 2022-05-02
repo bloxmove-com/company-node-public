@@ -1,0 +1,209 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  labels:
+    app: {{ .Values.appName }}
+    "helm.sh/chart": "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+      annotations:
+        rollme: {{ randAlphaNum 5 | quote }}
+    spec:
+      containers:
+        - name: {{ .Values.appName }}
+          image: {{ .Values.imageURL }}:{{ default "latest" .Values.imageTag }}
+          imagePullPolicy: Always
+          env:
+            - name: "NODE_ENV"
+              value: {{ default "dev" .Values.nodeEnv }}
+            - name: "apiKey"
+              value: {{ .Values.apiKey }}
+            - name: "accountDID"
+              value: {{ .Values.accountDID }}
+            - name: "accessTokenExpirationSeconds"
+              value: {{ .Values.accessTokenExpirationSeconds | quote }} 
+            - name: "accessTokenVcMaxFutureExpirationInSeconds"
+              value: {{ .Values.accessTokenVcMaxFutureExpirationInSeconds | quote }}
+            - name: "resalePackageClaims"
+              value: {{ .Values.resalePackageClaims }}
+            - name: "backfillUpdateInterval"
+              value: {{ .Values.backfillUpdateInterval | quote }}
+            - name: "timestampExpirationInSeconds"
+              value: {{ .Values.timestampExpirationInSeconds | quote }}
+            {{- if .Values.web3Provider }}
+            - name: "web3Provider"
+              value: {{ .Values.web3Provider }} 
+            - name: "chainId"
+              value: {{ .Values.chainId | quote }}
+            - name: "networkName"
+              value: {{ .Values.networkName }}
+            - name: "ipfsHost"
+              value: {{ .Values.ipfsHost }}
+            - name: "ipfsPort"
+              value: {{ .Values.ipfsPort | quote }}
+            - name: "ipfsProtocol"
+              value: {{ .Values.ipfsProtocol }}
+            - name: "ipfsBasePath"
+              value: {{ .Values.ipfsBasePath }}
+            - name: "didRegistryAddress"
+              value: {{ .Values.didRegistryAddress }}
+            - name: "attestationRegistryAddress"
+              value: {{ .Values.attestationRegistryAddress }}
+            - name: "ensAddress"
+              value: {{ .Values.ensAddress }}
+            - name: "didDefaultValidity"
+              value: {{ .Values.didDefaultValidity | quote }}
+            - name: "resolverName"
+              value: {{ .Values.resolverName }}
+            - name: "currentAccountDidMethod"
+              value: {{ .Values.currentAccountDidMethod }}
+            - name: "accountAddress"
+              value: {{ .Values.accountAddress }}
+            - name: "accountPrivateKey"
+              value: {{ .Values.accountPrivateKey }}
+            - name: "gasLimit"
+              value: {{ .Values.gasLimit | quote }}
+            - name: "ontId"
+              value: {{ .Values.ontId }}
+            - name: "ontPrivateKeyWIF"
+              value: {{ .Values.ontPrivateKeyWIF }}
+            - name: "ontPublicKeyIndex"
+              value: {{ .Values.ontPublicKeyIndex | quote }}
+            - name: "ontNodeUrl"
+              value: {{ .Values.ontNodeUrl }}
+            {{- end }}
+            - name: "backfillEnabled"
+              value: "{{ .Values.backfillEnabled }}"
+            - name: "virtualCarWalletApiKey"
+              value: {{ .Values.virtualCarWalletApiKey }}
+            - name: "virtualCarWalletBaseUrl"
+              value: {{ .Values.virtualCarWalletBaseUrl }}
+            - name: "companyClaim"
+              value: {{ .Values.companyClaim }}
+            {{- if .Values.smartVin }}
+            - name: "smartVin.enabled"
+              value: "{{ .Values.smartVin.enabled }}"
+            - name: "smartVin.ownIdentity"
+              value: "{{ .Values.smartVin.ownIdentity }}"
+            {{- if .Values.smartVin.url }}
+            - name: "smartVin.url.transferVehiclePossession"
+              value: "{{ .Values.smartVin.url.transferVehiclePossession }}"
+            - name: "smartVin.url.consumeAgreement"
+              value: "{{ .Values.smartVin.url.consumeAgreement }}"
+            - name: "smartVin.url.createAgreement"
+              value: "{{ .Values.smartVin.url.createAgreement }}"
+            - name: "smartVin.url.getAgreement"
+              value: "{{ .Values.smartVin.url.getAgreement }}"  
+            - name: "smartVin.url.getLiabilities"
+              value: "{{ .Values.smartVin.url.getLiabilities }}"
+            - name: "smartVin.url.payLiability"
+              value: "{{ .Values.smartVin.url.payLiability }}"
+            - name: "smartVin.url.issueCash"
+              value: "{{ .Values.smartVin.url.issueCash }}"
+            - name: "smartVin.url.issueVehicle"
+              value: "{{ .Values.smartVin.url.issueVehicle }}"
+            {{- end }}
+            {{- end }}
+            - name: "SWAGGER_BASE_PATH"
+              value: {{ .Values.swaggerBasePath }}
+            {{- if .Values.apiType }}
+            - name: "apiType"
+              value: {{ .Values.apiType }}
+            {{- end }}
+            {{- if .Values.bloxmoveTompGatewayBaseUrl }}
+            - name: "bloxmoveTompGatewayBaseUrl"
+              value: {{ .Values.bloxmoveTompGatewayBaseUrl }} 
+            {{- end }}
+            {{- if .Values.ownFleetNodeUrl }}
+            - name: "ownFleetNodeUrl"
+              value: {{ .Values.ownFleetNodeUrl }}
+            {{- end }}
+            {{- if .Values.fleetbackendBaseUrl }}
+            - name: "fleetbackendBaseUrl"
+              value: {{ .Values.fleetbackendBaseUrl }}
+            {{- end }}
+            {{- if .Values.fleetBackendTenantId }}
+            - name: "fleetBackendTenantId"
+              value: {{ .Values.fleetBackendTenantId | quote }}
+            {{- end }}
+            {{- if .Values.fleetBackendUser }}
+            - name: "fleetBackendUser"
+              value: {{ .Values.fleetBackendUser }}
+            {{- end }}
+            {{- if .Values.fleetBackendPassword }}
+            - name: "fleetBackendPassword"
+              value: {{ .Values.fleetBackendPassword }}
+            {{- end }}
+            {{- if .Values.serviceCatalogAggregatorBaseUrl }}
+            - name: "serviceCatalogAggregatorBaseUrl"
+              value: {{ .Values.serviceCatalogAggregatorBaseUrl }} 
+            {{- end }}
+            {{- if .Values.serviceCatalogAggregatorApiKey }}
+            - name: "serviceCatalogAggregatorApiKey"
+              value: {{ .Values.serviceCatalogAggregatorApiKey }} 
+            {{- end }}
+            {{- if .Values.vehicleAuthorityBaseUrl }}
+            - name: "vehicleAuthorityBaseUrl"
+              value: {{ .Values.vehicleAuthorityBaseUrl }} 
+            {{- end }}
+            {{- if .Values.vehicleAuthorityVehicleParentDomain }}
+            - name: "vehicleAuthorityVehicleParentDomain"
+              value: {{ .Values.vehicleAuthorityVehicleParentDomain }} 
+            {{- end }}
+            {{- if .Values.defaultZone }}
+            - name: "defaultZone"
+              value: {{ .Values.defaultZone }}
+            {{- end }}
+            {{- if .Values.kycIssuers }}
+            - name: "kycIssuers"
+              value: {{ .Values.kycIssuers }}
+            {{- end }}
+            {{- if .Values.ownNodeUrl }}
+            - name: "ownNodeUrl"
+              value: {{ .Values.ownNodeUrl }}
+            {{- end }}
+            {{- if .Values.ssiWalletBaseUrl }}
+            - name: "ssiWalletBaseUrl"
+              value: {{ .Values.ssiWalletBaseUrl }}
+            {{- end }}
+            {{- if .Values.energyWebBaseUrl }}
+            - name: "energyWebBaseUrl"
+              value: {{ .Values.energyWebBaseUrl }}
+            {{- end }}
+            {{- if .Values.cpoBackendBaseUrl }}
+            - name: "cpoBackendBaseUrl"
+              value: {{ .Values.cpoBackendBaseUrl }}
+            {{- end }}
+            {{- if .Values.cpoBackendApiKey }}
+            - name: "cpoBackendApiKey"
+              value: {{ .Values.cpoBackendApiKey }}
+            {{- end }}
+            {{- if .Values.enableVCVP }}
+            - name: "enableVCVP"
+              value: "{{ .Values.enableVCVP }}"
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: 3000
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            timeoutSeconds: 3
+            periodSeconds: 5

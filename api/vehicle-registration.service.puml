@@ -1,0 +1,35 @@
+@startuml
+class NameAlreadyExistsException extends ConflictException
+abstract class SettlementService {
+    +{abstract} registerForSettlement(): Promise<void>
+    +{abstract} registerAsset(assetDID: string): Promise<void>
+    +{abstract} createAndStartAgreement(contractData: IVehicleContractData, contractDID: string): Promise<string>
+    +{abstract} endAgreement(agreementId: string, usageData: IUsageData): Promise<void>
+    +{abstract} settleAgreement(agreementId: string): Promise<void>
+}
+class VehicleDetails {
+    +assetDID: string
+    +zone?: string
+    +thingId?: string
+}
+class VehicleRegistrationService {
+    -logger: Logger
+    -vehicleAuthorityBaseUrl: string
+    -ownFleetNodeUrl: string
+    -apiType: string
+    -virtualCarWalletBaseUrl: string
+    -virtualCarWalletApiKey: string
+    -config: ConfigService
+    -assetService: AssetService
+    -httpService: HttpService
+    -settlementService: SettlementService
+    +createDataAsset(vehicleRegistration: IVehicleRegistration): Promise<string>
+    +getDataAsset(vin: string): Promise<any>
+    -registerAddress(assetRegistration: IAssetRegistration): Promise<void>
+    -registerTelematicsBox(telematicsRegistration: ITelematicsRegistration): Promise<void>
+    +updateTelematicsBox(vin: string, vehicleDetails: VehicleDetails): Promise<void>
+    -verifyClaimedVin(vin: string): Promise<void>
+}
+VehicleRegistrationService --> "1" SettlementService
+VehicleRegistrationService --> "1" VehicleDetails
+@enduml

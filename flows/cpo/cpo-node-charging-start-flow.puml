@@ -1,0 +1,195 @@
+@startuml CPO-Node-Charge-Start-Flow
+autonumber
+ 
+participant "Switchboard (Wallet User)" as SWI
+participant "Customer" as CUS
+participant "EV Charging App" as APP
+participant "EV-Dashboard" as EVD
+participant "CPO-Backend" as CPB
+participant "CPO-Node" as CPN
+participant "CPO-SSI-Wallet" as SSI
+participant "Asset-Library (EWB)" as EWB
+
+
+== Authorization Charging-Start ==
+
+CUS -> APP: Request charging start
+APP -> EVD: Request charging start
+EVD -> CPB: Request start session
+
+CPB -> CPN: authorize session (not a customer)
+note right
+ISession {
+  country_code: string
+  party_id: string
+  location_id: string
+  evse_uid: string
+  connector_id: string
+}
+
+IToken {
+  uid: string
+}
+
+end note
+note left #FFAAAA
+ToDo LamA -> send session to cpo-node: /charge-session-authorize
+end note
+
+CPN -> EWB: create chargingContractDID (e.g.: did:ethr:blxm-dev:0xA09669d0376973b1D7d92Ba10F4B0b8719a34320)
+CPN -> SSI: request presentation invitation
+note right
+--> /vc-api/exchanges 
+
+exchangeId = chargingContractDID
+
+show user contractDID, EVSE ID, current time stamp
+
+{
+  exchangeId: <chargingContractDID>
+  interactServices: tbd (John)
+  query: tbd (John)
+  isOneTime: true
+  callback : {"url": "https://cpo-node-url/charge-session-authorization-callback" }
+}
+
+end note
+CPN -> EVD: send presentation invitation + token.uid
+note right
+Swagger: https://rebeam-dev-backend.energyweb.org/api/spec/#/Presentation/PresentationController_cachePresentation
+POST https://rebeam-dev-backend.energyweb.org/api/presentation
+{
+  "presentationLink": {
+    "type": "string",
+    "url": "https://lama-ssi-server/rebeam/vc-api/exchanges/{exchangeId}",
+    "ssiSession": ""
+  },
+  "ocpiTokenUID": "string"
+}
+
+end note
+CPN -> CPB: chargingContractDID
+CPN -> EWB: setAttestation /offerConfirm for chargingContractDID
+
+EVD -> APP: notify of presentation invitation
+
+APP -> SWI: presentation invitation
+
+SWI -> SSI: presentation proposal--> https://lama-ssi-server/rebeam/vc-api/exchanges/{exchangeId}
+SSI --> SWI: receive proposal
+
+
+SWI -> CUS: ask for signature to make VP
+note right
+signature that the customer is
+willing to pay for the session
+end note
+SWI -> SSI: send VP
+
+
+SSI -> CPN: receive VP (endpoint in cpo-node: /charge-session-authorization-callback)
+note left
+{
+  "exchangeId",
+  "transactionId",
+  "vpRequest"
+  "presentationSubmission": {
+    "verificationResult"
+    "vp"
+  }
+}
+end note
+
+CPN -> CPN: CPO-Node checks the incoming VP.
+note left
+- customer VC ok ?
+  - contractId
+  - charge intent 
+- is the signing provider authorized by elia
+end note
+
+CPN -> CPB: successful authorization, charging session can start
+note left #FFAAAA
+ToDo LamA -> create endpoint: /authorization-successful
+{
+  contractDID: string
+}
+end note
+
+CPN -> EWB: setAttestation /consumerConfirm for chargingContractDID
+
+== Start charging == 
+
+CPB -> CPN: session + contractDID
+note left #FFAAAA
+ToDo LamA -> send session to cpo-node: /charge-session-start
+end note
+note right
+ISession {
+  country_code: string;
+  party_id: string;
+  id: string;
+  start_date_time: string;
+  end_date_time?: string;
+  kwh: number;
+  cdr_token: ICdrToken;
+  auth_method: authMethod;
+  authorization_reference?: string;
+  location_id: string;
+  evse_uid: string;
+  connector_id: string;
+  meter_id?: string;
+  currency: string;
+  charging_periods?: IChargingPeriod[];
+  total_cost?: IPrice;
+  status: sessionStatus;
+  last_updated: string;
+}
+ContractDID {
+  chargingContractDID: string
+}
+end note
+
+CPN -> EWB: createDataProperty for chargingContractDID with startSessionData & save in IPFS
+CPN -> EWB: setAttestation /providerConfirm for chargingContractDID
+
+CPN --> CPB: ok
+
+== Update charging == 
+
+CPB -> CPN: session + contractDID
+note left #FFAAAA
+ToDo LamA -> send session to cpo-node: /charge-session-update
+end note
+note right
+ISession {
+  country_code: string;
+  party_id: string;
+  id: string;
+  start_date_time: string;
+  end_date_time?: string;
+  kwh: number;
+  cdr_token: ICdrToken;
+  auth_method: authMethod;
+  authorization_reference?: string;
+  location_id: string;
+  evse_uid: string;
+  connector_id: string;
+  meter_id?: string;
+  currency: string;
+  charging_periods?: IChargingPeriod[];
+  total_cost?: IPrice;
+  status: sessionStatus;
+  last_updated: string;
+}
+ContractDID {
+  chargingContractDID: string
+}
+end note
+
+CPN -> EWB: createDataProperty for chargingContractDID with updateSessionData & save in IPFS
+CPN -> EWB: setAttestation /providerUpdateChargeConfirm for chargingContractDID
+
+CPN --> CPB: ok
+
+@enduml

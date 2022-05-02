@@ -1,0 +1,14 @@
+nodeEnv: "local"
+appName: "fleet-node-3"
+imageURL: "127.0.0.1:5000/fleet-node"
+apiKey: "83jklolTL!-local-3"
+apiType: tomp
+serviceCatalogAggregatorBaseUrl: "http://service-catalog-aggregator.service-catalog-aggregator.svc.cluster.local"
+vehicleAuthorityBaseUrl: "http://vehicle-authority.vehicle-authority.svc.cluster.local"
+accountDID: 
+accountAddress: 
+accountPrivateKey: 
+accountPassword: "FleetnodeC1.0"
+backfillEnabled: "false"
+swaggerBasePath: /fleet-node-3
+bloxmoveTompGatewayBaseUrl: http://localhost:2900

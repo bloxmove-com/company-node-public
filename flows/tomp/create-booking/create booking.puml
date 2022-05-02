@@ -1,0 +1,150 @@
+@startuml Create Booking Flow
+ 
+participant "User Mobility App" as UMA 
+participant "Fleet Node" as FLN
+participant "TO Car Service" as TOC
+
+
+
+== Request Booking == 
+
+
+UMA -> FLN: request rent (vehicleDID, consumerDID, packageId, verifiablePresentation)
+note right
+vehicleDID -> VIN
+end note
+
+FLN -> TOC: 1) request all available-assets
+TOC --> FLN: receive all available-assets
+note left
+Get coordinates of specific VIN
+end note
+
+FLN -> TOC: 2) request planning (from, nrOfTravelers, useAssets)
+note left
+from = coordinates of specific VIN
+nrOfTravelers = 1
+useAssets = VIN
+end note
+
+
+
+TOC --> FLN: receive planning
+note left
+{
+"options": [
+        {
+            "id": "d45f0b04-16ce-4653-9b14-0c63742bd741",
+            "state": "NEW",
+            "legs": [
+                {
+                    "id": "d45f0b04-16ce-4653-9b14-0c63742bd741",
+                    "assetType": {
+                        "assetClass": "CAR",
+                        ...
+                    },
+                    "asset": {
+                        "id": "<VIN_Of_Asset>"
+                    },
+                    "pricing": {
+                       "parts": [
+                           {
+                               "amount": 0.5,
+                               "currencyCode": "EUR",
+                               "vatRate": 21,
+                               "type": "FLEX",
+                               "unitType": "MINUTE"
+                           }
+                       ]
+                    },
+                    "conditions": [
+                        {
+                            "conditionType": "conditionRequireBookingData",
+                            "id": "driverLicense"
+                        }
+                        ...
+                    ]
+                    ...
+                }
+            ],
+            ...
+        }
+    ]
+}
+end note
+FLN -> TOC: 3) request booking (id of previous planning)
+TOC --> FLN: receive booking in state pending
+note left
+{
+    "id": "d45f0b04-16ce-4653-9b14-0c63742bd741",
+    "state": "PENDING",
+    "legs": [
+        {
+            "id": "d45f0b04-16ce-4653-9b14-0c63742bd741",
+            "asset": {
+                "id": "<VIN_Of_Asset>"
+            },
+             "pricing": {
+                "parts": [
+                    {
+                        "amount": 0.5,
+                        "currencyCode": "EUR",
+                        "vatRate": 21,
+                        "type": "FLEX",
+                        "unitType": "MINUTE"
+                    }
+                ]
+             },
+            "conditions": [
+                {
+                    "conditionType": "conditionRequireBookingData",
+                    "id": "driverLicense"
+                }
+                ...
+            ]
+            ...
+        }
+    ],
+    ...
+}
+end note
+
+FLN -> TOC: 4) request operator information
+TOC --> FLN: receive operator information
+note left
+{
+    "systemId": "maas-car-3342",
+    "name": "Car Operator",
+    "email": "email@caroperator.org",
+    "conditions": "Terms and conditions of car transport operator..."
+    ...
+}
+end note
+
+FLN --> UMA: contractDID
+note right
+use bookingId, operator-conditions,
+pricing-information and
+booking-conditions in contract:
+
+IVehicleContractData:
+{
+  vehicleDID: <vehicleDID>
+  consumerDID: <consumerDID>
+  pricePerMinute: <amount>
+  pricePerKm: <amount>
+  requiredUserClaims: <booking-conditions>
+  termsConditions: <operator-conditions>
+  bookingId: <bookingId>
+}
+end note
+
+== Confirm Booking == 
+
+UMA -> FLN: complete rental start (contractDID, signed "consumerConfirm" verification)
+FLN -> TOC: request booking state change (id, "COMMIT")
+TOC --> FLN: receive "CONFIRMED" booking
+FLN --> UMA: ok
+
+
+@enduml

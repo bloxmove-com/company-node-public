@@ -1,0 +1,12 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 12 - Get Available Services
+
+F2SApp -> ServiceCatalogAggregator : get aggregated service catalog 
+ServiceCatalogAggregator [dashed]-> F2SApp : list of services with fleet owner DID and fleet node URL
+F2SApp -> F2SApp : select service 
+F2SApp [dashed]-> FleetNodeXYZ : interact with fleet node of selected service
+@enduml

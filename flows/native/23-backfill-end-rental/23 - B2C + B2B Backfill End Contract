@@ -1,0 +1,53 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 23 - B2C + B2B Backfill - End Contract
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+F2SApp [#green]-> FleetNodeA : 23.1 request end rental (contractDID, VC)
+FleetNodeA -> FleetBackendA : check if own vehicle
+FleetBackendA [dashed]-> FleetNodeA : no
+FleetNodeA -> AttestationContract : verify/check contract data, status and verifications (incl B2B contract)
+FleetNodeA -> RentalAssetContractB2B : 
+FleetNodeA -> RentalAssetContractB2C : 
+AttestationContract [dashed]-> FleetNodeA : ok
+FleetNodeA [#green]-> FleetNodeA : verify user signature
+FleetNodeA [#green]-> FleetNodeB : request end rental (B2B contract DID, VC)
+FleetNodeB -> AttestationContract : verify/check contract data, status and verifications
+FleetNodeB -> RentalAssetContractB2B : 
+AttestationContract [dashed]-> FleetNodeB : ok
+FleetNodeB -> FleetBackendB : release vehicle
+FleetBackendB [dashed]-> FleetNodeB : usage data (time, distance, price)
+FleetNodeB [dashed]-> FleetNodeA : B2B usage data
+FleetNodeB -> RentalAssetContractB2B : set usage data
+FleetNodeB [#blue]-> AttestationContract : setAttestation( B2B contractDID, '/providerEndConfirm', VC)
+FleetNodeA -> FleetNodeA : validate usage data, calculate B2C price
+FleetNodeA -> RentalAssetContractB2C : set usage data
+FleetNodeA [#blue]-> AttestationContract : setAttestation( B2C contractDID, '/providerEndConfirm', VC)
+FleetNodeA [dashed]-> F2SApp : B2C usage data
+F2SApp [#green]-> FleetNodeA : 23.2 complete end rental (B2C contractDID, VC)
+FleetNodeA -> AttestationContract : verify/check contract data, status and verifications
+FleetNodeA -> RentalAssetContractB2C : 
+AttestationContract [dashed]-> FleetNodeA : ok
+FleetNodeA [#blue]-> AttestationContract : setAttestation(B2C contractDID, '/consumerEndConfirm', VC)
+FleetNodeA [dashed]-> F2SApp : ok
+FleetNodeA -> FleetASmartVinNode : consume B2C agreement (agreement id, rental payload)
+FleetASmartVinNode [dashed]-> FleetNodeA : B2C liability
+FleetNodeA -> FleetASmartVinNode : vehicle possession transfer (from: customer, to: Fleet a, B2C liability)
+FleetNodeA -> RentalAssetContractB2C : get referenced B2B contract
+RentalAssetContractB2C [dashed]-> FleetNodeA : 
+FleetNodeA [#green]-> FleetNodeB : complete end rental (B2B contractDID, VC)
+FleetNodeB -> AttestationContract : verify/check contract data, status and verifications
+FleetNodeB -> RentalAssetContractB2B : ok
+FleetNodeB [#blue]-> AttestationContract : setAttestation(B2B contractDID, '/consumerEndConfirm', VC)
+FleetNodeB -> FleetBSmartVinNode : consume B2B agreement (agreement id, rental payload)
+FleetBSmartVinNode [dashed]-> FleetNodeB : B2B liability
+FleetNodeB -> FleetBSmartVinNode : vehicle possession transfer (from: Fleet A, to: Fleet B, B2B liability)
+@enduml

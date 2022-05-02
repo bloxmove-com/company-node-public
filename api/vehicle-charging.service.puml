@@ -1,0 +1,207 @@
+@startuml
+abstract class SettlementService {
+    +{abstract} registerForSettlement(): Promise<void>
+    +{abstract} registerAsset(assetDID: string): Promise<void>
+    +{abstract} createAndStartAgreement(contractData: IVehicleContractData, contractDID: string): Promise<string>
+    +{abstract} endAgreement(agreementId: string, usageData: IUsageData): Promise<void>
+    +{abstract} settleAgreement(agreementId: string): Promise<void>
+}
+class ChargingHelperService {
+    -logger: Logger
+    -ourDID: any
+    -config: ConfigService
+    -assetService: AssetService
+}
+class OcpiResponse {
+    +status_code: number
+    +status_message?: string
+    +data?: any
+    +timestamp: Date
+    +ocn_signature?: string
+    +{static} basicSuccess(): OcpiResponse
+    +{static} withData(data: any): OcpiResponse
+    +{static} withMessage(status_code: number, status_message: string): OcpiResponse
+}
+class OcpiError extends Error {
+    +status_code: number
+    +status_message: string
+}
+class JWTVerifiableInvoiceUtilService {
+    -privateKey: string
+    -algorithm: Algorithm
+    +create(params: InvoiceParams<unknown>): Promise<InvoiceString>
+    +verify(invoice: string): Promise<VerifiedInvoice<T>>
+    -checkPrice(price: Price): void
+    -checkBaseAmount(baseAmount: number): boolean
+    -checkDecimals(decimals: number): boolean
+    -checkCurrencyCode(currencyCode: string): boolean
+}
+class Session {
+    +country_code: string
+    +party_id: string
+    +id: string
+    +start_date_time: string
+    +location_id: string
+    +evse_uid: string
+    +connector_id: string
+    +end_date_time?: string
+    +kwh: number
+    +cdr_token: any
+    +auth_method: string
+    +authorization_reference?: string
+    +meter_id?: string
+    +currency: string
+    +charging_periods?: any
+    +total_cost?: any
+    +status: string
+    +last_updated: string
+}
+class ChargingStartRequest {
+    +session: Session
+    +contractDID: string
+}
+class SessionUpdate {
+    +country_code: string
+    +party_id: string
+    +id: string
+    +start_date_time: string
+    +location_id: string
+    +evse_uid: string
+    +connector_id: string
+    +end_date_time: string
+    +kwh: number
+    +cdr_token: any
+    +auth_method: string
+    +authorization_reference: string
+    +meter_id: string
+    +currency: string
+    +charging_periods: any
+    +total_cost: any
+    +status: string
+    +last_updated: string
+}
+class ChargingUpdateRequest {
+    +session: SessionUpdate
+    +contractDID: string
+}
+class ChargeDetailRecord {
+    +country_code: string
+    +party_id: string
+    +id: string
+    +start_date_time: string
+    +end_date_time: string
+    +session_id?: string
+    +cdr_token: any
+    +auth_method: string
+    +authorization_reference?: string
+    +cdr_location: any
+    +meter_id?: string
+    +currency: string
+    +tariffs?: any
+    +charging_periods: any
+    +signed_data?: any
+    +total_cost: any
+    +total_fixed_cost: any
+    +total_energy: number
+    +total_energy_cost: any
+    +total_time: number
+    +total_time_cost: any
+    +total_parking_time?: number
+    +total_parking_cost?: any
+    +total_reservation_cost?: any
+    +remark?: string
+    +invoice_reference_id?: string
+    +credit?: boolean
+    +credit_reference_id?: string
+    +last_updated: string
+}
+class ChargingEndRequest {
+    +session: Session
+    +chargeDetailRecord: ChargeDetailRecord
+    +contractDID: string
+}
+class AuthorizationSession {
+    +country_code: string
+    +party_id: string
+    +id?: string
+    +start_date_time?: string
+    +location_id: string
+    +evse_uid: string
+    +connector_id: string
+}
+class Token {
+    +uid: string
+}
+class AuthorizationRequest {
+    +token: Token
+    +session: AuthorizationSession
+}
+class VerificationResult {
+    +checks: string[]
+    +warnings: string[]
+    +errors: string[]
+}
+class PresentationSubmission {
+    +verificationResult: VerificationResult
+    +vp: any
+}
+class AuthorizationCallback {
+    +transactionId: string
+    +exchangeId: string
+    +vpRequest: any
+    +presentationSubmission?: PresentationSubmission
+}
+class ContractDID {
+    +contractDID: string
+}
+class Token {
+    +uid: string
+}
+class AuthorizationEndRequest {
+    +token: Token
+    +session: AuthorizationSession
+    +contractDID: string
+}
+class VehicleChargingService {
+    -logger: Logger
+    -ourDID: any
+    -ssiWalletBaseUrl: string
+    -energyWebBaseUrl: string
+    -cpoBackendBaseUrl: string
+    -cpoBackendApiKey: string
+    -ownNodeUrl: string
+    -config: ConfigService
+    -assetService: AssetService
+    -chargingHelperService: ChargingHelperService
+    -settlementService: SettlementService
+    -httpService: HttpService
+    +onApplicationBootstrap(): Promise<void>
+    +chargeSessionAuthorize(authorizationRequest: AuthorizationRequest): Promise<ContractDID>
+    +handleChargeSessionAuthorizationCallback(chargeSessionAuthorizationCallback: AuthorizationCallback): Promise<string>
+    +chargeEndSessionAuthorize(authorizationEndRequest: AuthorizationEndRequest): Promise<void>
+    +handleChargeEndSessionAuthorizationCallback(chargeSessionEndAuthorizationCallback: AuthorizationCallback): Promise<void>
+    +chargingStart(data: ChargingStartRequest): Promise<void>
+    +chargingUpdate(data: ChargingUpdateRequest): Promise<void>
+    +chargingEnd(data: ChargingEndRequest): Promise<any>
+    +getCpoBackendJwt(): Promise<string>
+}
+ChargingStartRequest --> "1" Session
+ChargingUpdateRequest --> "1" SessionUpdate
+ChargingEndRequest --> "1" Session
+ChargingEndRequest --> "1" ChargeDetailRecord
+AuthorizationRequest --> "1" Token
+AuthorizationRequest --> "1" AuthorizationSession
+PresentationSubmission --> "1" VerificationResult
+AuthorizationCallback --> "1" PresentationSubmission
+AuthorizationEndRequest --> "1" Token
+AuthorizationEndRequest --> "1" AuthorizationSession
+VehicleChargingService --> "1" ChargingHelperService
+VehicleChargingService --> "1" SettlementService
+VehicleChargingService --> "1" AuthorizationRequest
+VehicleChargingService --> "1" ContractDID
+VehicleChargingService --> "1" AuthorizationCallback
+VehicleChargingService --> "1" AuthorizationEndRequest
+VehicleChargingService --> "1" ChargingStartRequest
+VehicleChargingService --> "1" ChargingUpdateRequest
+VehicleChargingService --> "1" ChargingEndRequest
+@enduml

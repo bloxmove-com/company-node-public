@@ -1,0 +1,59 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 21 - B2C + B2B Backfill - Start Contract
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+
+F2SApp [#green]-> FleetNodeA : 21.1 request rent (consumerDID, vehicleDID, packageId, VC)
+FleetNodeA -> FleetBackendA : check if own vehicle 
+FleetBackendA [dashed]-> FleetNodeA : no 
+FleetNodeA -> AttestationContract : verify claims of userDID
+AttestationContract [dashed]-> FleetNodeA : ok
+FleetNodeA [#green]-> FleetNodeB : request rent(consumerDID, vehicleDID, packageId, VP)
+FleetNodeB [#green]-> FleetNodeB : verify claims of FleetNodeA
+AttestationContract [dashed]-> FleetNodeB : ok
+FleetNodeB -> AssetContractFactory : request new contract (contract data)
+AssetContractFactory -> RentalAssetContractB2B : create new contract
+AssetContractFactory [dashed]-> FleetNodeB : B2B contractDID
+FleetNodeB [dashed]-> FleetNodeA  : B2B contractDID
+FleetNodeB [#blue]-> AttestationContract : setAttestation(B2BcontractDID, '/offerConfirm', VC)
+FleetNodeA -> RentalAssetContractB2B : verify/check contract data
+RentalAssetContractB2B [dashed]-> FleetNodeA
+FleetNodeA [#green]-> FleetNodeB : completeStart(B2B contractDID, consumerConfirmVC)
+FleetNodeB [#green]-> FleetNodeB : verify FleetNodeA confirmation
+AttestationContract [dashed]-> FleetNodeB : ok
+FleetNodeB -> FleetBackendB : check vehicle status, mark as booked
+FleetBackendB[dashed]-> FleetNodeB : ok
+FleetNodeB [dashed]-> FleetNodeA : B2B contract confirmed
+FleetNodeB [#blue]-> AttestationContract : setAttestation(B2BcontractDID, 'consumerConfim', VC)
+FleetNodeB -> FleetBSmartVinNode : issue B2B agreement
+FleetBSmartVinNode [dashed]-> FleetNodeB : agreement id 
+FleetNodeB -> RentalAssetContractB2B : set agreement id 
+FleetNodeB -> FleetBSmartVinNode : vehicle possession transfer (from: Fleet B, to: Fleet A)
+FleetNodeB [#blue]-> AttestationContract : setAttestation(B2BcontractDID, '/providerConfirm', VC)
+FleetNodeA -> AssetContractFactory : request new contract (contract data, B2B contract DID as referenced contract)
+AssetContractFactory -> RentalAssetContractB2C : create new contract
+AssetContractFactory [dashed]-> FleetNodeA : B2C contractDID
+FleetNodeA [dashed]-> F2SApp : B2C contractDID
+FleetNodeA [#blue]-> AttestationContract : setAttestation(B2C contractDID, '/offerConfirm', VC)
+F2SApp [#green]-> FleetNodeA : 21.2 complete rental start(B2C contractDID, consumerConfirmVC)
+FleetNodeA -> AttestationContract : verify/check contract data, status and verifications, incl. referenced B2B contract
+FleetNodeA -> RentalAssetContractB2B :
+FleetNodeA -> RentalAssetContractB2C : 
+AttestationContract -> FleetNodeA : ok
+FleetNodeA -> F2SApp : ok
+FleetNodeA [#blue]-> AttestationContract : setAttestation(B2C contractDID, 'consumerConfim', VC)
+FleetNodeA -> FleetASmartVinNode : issue B2C agreement
+FleetASmartVinNode -> FleetNodeA : agreement id
+FleetNodeA -> RentalAssetContractB2C : set agreement id
+FleetNodeA -> FleetASmartVinNode : vehicle possesion transfer (from: Fleet A, to: customer)
+FleetNodeA [#blue]-> AttestationContract : setAttestation(B2C contractDID, '/providerConfirm', VC)
+@enduml

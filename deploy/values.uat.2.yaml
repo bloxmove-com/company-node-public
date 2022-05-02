@@ -1,0 +1,62 @@
+nodeEnv: "k8s"
+appName: "fleet-node-2"
+
+# fleet node config
+apiKey: "83jklolTL!-test-2"
+imageURL: "069870223720.dkr.ecr.eu-central-1.amazonaws.com/blxm/fleet-node"
+accountDID: did:ethr:blxm-uat:0xbD2A5b7fBEC2E8643807872bf727eCDA888e40AA
+backfillEnabled: "false"
+swaggerBasePath: /fleet-node-2
+defaultZone: STUTTGART
+accessTokenExpirationSeconds: 300
+accessTokenVcMaxFutureExpirationInSeconds: 10
+resalePackageClaims: minAge18,driverLicense
+backfillUpdateInterval: 20000
+timestampExpirationInSeconds: 10
+smartVin:
+  enabled: false
+  ownIdentity: Fleet2
+  url:
+    transferVehiclePossession: "http://fleet2.smartvin:8080/api/smartvin/vehicles/:vin/possession-transactions"
+    consumeAgreement: "http://fleet2.smartvin:8080/api/smartvin/agreements/:agreementId/consumes"
+    createAgreement: "http://fleet2.smartvin:8080/api/smartvin/agreements"
+    getAgreement: "http://fleet2.smartvin:8080/api/smartvin/agreements/:agreementId/types/:type"
+    getLiabilities: "http://fleet2.smartvin:8080/api/smartvin/liabilities"
+    payLiability: "http://fleet2.smartvin:8080/api/smartvin/liabilities/:liabilityId/payments"
+    issueCash: "http://fleet2.smartvin:8080/api/smartvin/cash"
+    issueVehicle: "http://fleet2.smartvin:8080/api/smartvin/vehicles"
+
+kycIssuers: "did:ethr:blxm-uat:0xf249B005C6E58ae9218af3423Ea1De06e93Ef6C1,did:ont:ALgcpQyKwudRKNnCZuUYjK47mqwZrzPNQG,did:web:doorman-pre-prod.wallet.eu.spherity.io:uuid:4f7d2251f7c34e829971a1ad8c41c6d2"
+
+# asset library config
+ontId: did:ont:AYMEqbQ2Nz3YWJvrMaMS5xA5DhKrUvLeSm
+ontPrivateKeyWIF: 
+ontPublicKeyIndex: 1
+ontNodeUrl: http://polaris1.ont.io:20334
+
+web3Provider: ws://validator1-0.besu-validator1.besu:8546
+chainId: 1000
+networkName: blxm-uat
+ipfsHost: local-ipfs.local-ipfs
+ipfsPort: 5001
+ipfsProtocol: http
+ipfsBasePath: /api/v0
+accountAddress: 0xbD2A5b7fBEC2E8643807872bf727eCDA888e40AA
+accountPrivateKey: 
+didRegistryAddress: 0x7b72a0943fea9c5B3DDA2b11a846882d548e6180
+attestationRegistryAddress: 0xE4e989684cBc0E8B2DED99bCB45644C0Cf508bb1
+ensAddress: 0xB6368320F27Bf65022618b667d22DA2d397EEeA4
+currentAccountDidMethod: ethr
+
+# connected endpoints
+serviceCatalogAggregatorBaseUrl: https://uat.mobilityblockchainplatform.io/service-catalog-aggregator
+serviceCatalogAggregatorApiKey: 
+
+virtualCarWalletBaseUrl: https://uat.mobilityblockchainplatform.io/virtual-car-wallet
+
+vehicleAuthorityBaseUrl: https://uat.mobilityblockchainplatform.io/vehicle-authority
+vehicleAuthorityVehicleParentDomain: vin.bloxmove
+
+fleetbackendBaseUrl: https://uat.mobilityblockchainplatform.io/fleet-backend
+fleetBackendTenantId: 2
+

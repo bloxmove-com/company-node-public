@@ -1,0 +1,55 @@
+nodeEnv: "k3s-b"
+appName: "fleet-node-2"
+imageURL: "127.0.0.1:5000/fleet-node"
+apiKey: "83jklolTL!-local-2"
+accountDID: "did:ethr:blxm-local:0xa44B67122793E8469C98E3874A22aFE97CF62fda"
+accessTokenExpirationSeconds: 300
+accessTokenVcMaxFutureExpirationInSeconds: 10
+resalePackageClaims: minAge18,driverLicense
+backfillUpdateInterval: 20000
+timestampExpirationInSeconds: 10
+backfillEnabled: "false"
+swaggerBasePath: /fleet-node-2
+defaultZone: STUTTGART
+smartVin:
+  enabled: false
+  ownIdentity: Fleet2
+  url:
+    transferVehiclePossession: "http://fleet2.smartvin:8080/api/smartvin/vehicles/:vin/possession-transactions"
+    consumeAgreement: "http://fleet2.smartvin:8080/api/smartvin/agreements/:agreementId/consumes"
+    createAgreement: "http://fleet2.smartvin:8080/api/smartvin/agreements"
+    getAgreement: "http://fleet2.smartvin:8080/api/smartvin/agreements/:agreementId/types/:type"
+    getLiabilities: "http://fleet2.smartvin:8080/api/smartvin/liabilities"
+    payLiability: "http://fleet2.smartvin:8080/api/smartvin/liabilities/:liabilityId/payments"
+    issueCash: "http://fleet2.smartvin:8080/api/smartvin/cash"
+    issueVehicle: "http://fleet2.smartvin:8080/api/smartvin/vehicles"
+
+ontId: did:ont:ARQfKAoLc9Wdg8gviZz3V9ViYyVSjLKteA
+ontPrivateKeyWIF: L4o9iha8MTWefor1NK1meFjVSbGuDmet4wi2wUg9LYwLHLBGSWVy
+ontPublicKeyIndex: 1
+ontNodeUrl: http://polaris1.ont.io:20334
+
+web3Provider: ws://quorum-node1.quorum-network:8546
+chainId: 1000
+networkName: blxm-local
+ipfsHost: local-ipfs.local-ipfs
+ipfsPort: 5001
+ipfsProtocol: http
+ipfsBasePath: /api/v0
+accountAddress: "0xa44B67122793E8469C98E3874A22aFE97CF62fda"
+accountPrivateKey: "dc49ee9eb7865264e4f4063d1f47101f21a8fb2bf7b68bc9d2448c9c4852d77e"
+didRegistryAddress: "0xa4D168905e9c62333173e8573D4DC04185b38107"
+attestationRegistryAddress: "0xCe039E088D2f2940BF29E50e9370673DFaA79705"
+ensAddress: "0x66E0b53C9C724211BD2E6B1640BF5FBE4C8377EB"
+currentAccountDidMethod: ethr
+
+fleetbackendBaseUrl: "http://fleet-backend.fleet-backend.svc.cluster.local"
+fleetBackendTenantId: "2"
+fleetBackendUser: backend@tenant2.com
+fleetBackendPassword: init
+serviceCatalogAggregatorBaseUrl: "http://service-catalog-aggregator.service-catalog-aggregator.svc.cluster.local"
+serviceCatalogAggregatorApiKey: AKYC83Gw-local
+vehicleAuthorityBaseUrl: "http://vehicle-authority.vehicle-authority.svc.cluster.local"
+vehicleAuthorityVehicleParentDomain: vin.bloxmove
+virtualCarWalletBaseUrl: "http://virtual-car-wallet.virtual-car-wallet.svc.cluster.local"
+virtualCarWalletApiKey: 13e00aac-98a0-4552-934e-28f70f54d53d-local

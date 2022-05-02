@@ -1,0 +1,42 @@
+@startuml Rental End Flow
+ 
+participant "User Mobility App" as UMA 
+participant "Fleet Node" as FLN
+participant "TO Car Service" as TOC
+
+
+
+== Request Rental-End == 
+
+
+UMA -> FLN: request end rental (contractDID, signature)
+
+FLN -> TOC: 1) request booking leg state change (id, time, event: FINISH)
+TOC --> FLN: receive updated booking leg
+
+FLN -> TOC: 2) request payment journal(id)
+TOC --> FLN: receive payment journal
+
+FLN --> UMA: usage data
+note right
+map data of received leg and 
+payment journal to usage data object:
+
+IUsageData:
+{
+    rentalStartTime: <departureTime>,
+    rentalStartMileage: null,
+    rentalDuration: <usedTime>,
+    rentalMileage: null,
+    rentalEndTime: <arrivalTime>,
+    rentalEndMileage: null,
+    rentalStartLocLat: <from.coordinates.lat>,
+    rentalStartLocLong: <from.coordinates.lng>,
+    rentalEndLocLat: <to.coordinates.lat>,
+    rentalEndLocLong: <to.coordinates.lng>,
+    finalPrice: <amount>,
+    priceComment: <comment>,
+}
+end note
+
+@enduml

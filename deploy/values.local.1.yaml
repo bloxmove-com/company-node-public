@@ -1,0 +1,59 @@
+nodeEnv: "k3s-a"
+appName: "fleet-node-1"
+imageURL: "127.0.0.1:5000/fleet-node"
+apiKey: "83jklolTL!-local-1"
+accountDID: "did:ethr:blxm-local:0xaFaEDAC2fDF673Aaae21092B8994b4fEC5AAd829"
+accessTokenExpirationSeconds: 300
+accessTokenVcMaxFutureExpirationInSeconds: 10
+resalePackageClaims: minAge18,driverLicense
+backfillUpdateInterval: 20000
+timestampExpirationInSeconds: 10
+backfillEnabled: "true"
+swaggerBasePath: /fleet-node-1
+defaultZone: STUTTGART
+smartVin:
+  enabled: false
+  ownIdentity: Fleet1
+  url:
+    transferVehiclePossession: "http://fleet1.smartvin:8080/api/smartvin/vehicles/:vin/possession-transactions"
+    consumeAgreement: "http://fleet1.smartvin:8080/api/smartvin/agreements/:agreementId/consumes"
+    createAgreement: "http://fleet1.smartvin:8080/api/smartvin/agreements"
+    getAgreement: "http://fleet1.smartvin:8080/api/smartvin/agreements/:agreementId/types/:type"
+    getLiabilities: "http://fleet1.smartvin:8080/api/smartvin/liabilities"
+    payLiability: "http://fleet1.smartvin:8080/api/smartvin/liabilities/:liabilityId/payments"
+    issueCash: "http://fleet1.smartvin:8080/api/smartvin/cash"
+    issueVehicle: "http://fleet1.smartvin:8080/api/smartvin/vehicles"
+
+kycIssuers: "did:ethr:blxm-local:0xb67362af7e205cf76b393781dd28ee07ae7bb36d,did:ont:ALgcpQyKwudRKNnCZuUYjK47mqwZrzPNQG"
+companyClaim: '''[{"@context":["https://www.w3.org/2018/credentials/v1"],"type":["VerifiableCredential","CompanyCredential"],"credentialSubject":{"id":"did:ethr:blxm-local:0xaFaEDAC2fDF673Aaae21092B8994b4fEC5AAd829","company":true,"proofPurpose":"assertionMethod"},"issuer":"did:ethr:blxm-local:0xB67362Af7e205Cf76B393781DD28EE07AE7BB36D","issuanceDate":"2021-11-21T21:06:10.230Z","proof":{"type":"EcdsaSecp256k1RecoveryMethod2020","proofPurpose":"assertionMethod","verificationMethod":"did:ethr:blxm-local:0xB67362Af7e205Cf76B393781DD28EE07AE7BB36D#controller","created":"2021-11-21T21:06:10.221Z","proofValue":"0x13fdd46fb8c0a1548f99e16b659d541afc8939ebb66618e0ce35d6ce973bfb8347d9588e40c119161a48c4d5ef8b870bcf71ad5f8cd6ab156c2feb94c36a01e71b"}}]'''
+
+ontId: did:ont:ARQfKAoLc9Wdg8gviZz3V9ViYyVSjLKteA
+ontPrivateKeyWIF: L4o9iha8MTWefor1NK1meFjVSbGuDmet4wi2wUg9LYwLHLBGSWVy
+ontPublicKeyIndex: 1
+ontNodeUrl: http://polaris1.ont.io:20334
+
+web3Provider: http://quorum-node1.quorum-network:8545
+chainId: 1000
+networkName: blxm-local
+ipfsHost: local-ipfs.local-ipfs
+ipfsPort: 5001
+ipfsProtocol: http
+ipfsBasePath: /api/v0
+accountAddress: "0xaFaEDAC2fDF673Aaae21092B8994b4fEC5AAd829"
+accountPrivateKey: e83a0d9c50614d9ea4f95d11a8818bb58b88e3493bb6af02957cf1e1bb733cda
+didRegistryAddress: "0xa4D168905e9c62333173e8573D4DC04185b38107"
+attestationRegistryAddress: "0xCe039E088D2f2940BF29E50e9370673DFaA79705"
+ensAddress: "0x66E0b53C9C724211BD2E6B1640BF5FBE4C8377EB"
+currentAccountDidMethod: ethr
+
+fleetbackendBaseUrl: "http://fleet-backend.fleet-backend.svc.cluster.local"
+fleetBackendTenantId: "1"
+fleetBackendUser: backend@tenant1.com
+fleetBackendPassword: init
+serviceCatalogAggregatorBaseUrl: "http://service-catalog-aggregator.service-catalog-aggregator.svc.cluster.local"
+serviceCatalogAggregatorApiKey: AKYC83Gw-local
+vehicleAuthorityBaseUrl: "http://vehicle-authority.vehicle-authority.svc.cluster.local"
+vehicleAuthorityVehicleParentDomain: vin.bloxmove
+virtualCarWalletBaseUrl: "http://virtual-car-wallet.virtual-car-wallet.svc.cluster.local"
+virtualCarWalletApiKey: 13e00aac-98a0-4552-934e-28f70f54d53d-local
+

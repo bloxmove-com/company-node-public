@@ -1,0 +1,407 @@
+{
+	"info": {
+		"_postman_id": "d7b971ce-2c71-4118-959b-b57a4069cee0",
+		"name": "CPO Backend Operator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Call Authorization Successful",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const api_key = pm.variables.get(\"API_KEY\");\r",
+							"const postRequest = {\r",
+							"  url: `https://dev.ubstack.iao.fraunhofer.de/authentication/api/authenticate/apiKey?apiKey=${api_key}`,\r",
+							"  method: 'POST',\r",
+							"};\r",
+							"const res = pm.sendRequest(postRequest, (error, response) => {\r",
+							"  if (error) {\r",
+							"    console.log(error);\r",
+							"  }\r",
+							"  pm.test('response should be okay to process', () => {\r",
+							"    pm.expect(error).to.equal(null);\r",
+							"    pm.expect(response).to.have.property('code', 200);\r",
+							"    pm.expect(response).to.have.property('status', 'OK');\r",
+							"  });\r",
+							"\r",
+							"  let json = response.json();\r",
+							"  pm.variables.set(\"JWT\", json.jwt);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/authorization-successful/:commandIdentifier",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"authorization-successful",
+						":commandIdentifier"
+					],
+					"variable": [
+						{
+							"key": "commandIdentifier",
+							"value": "2ae6aace-3b70-47b7-88f4-32a0b5a93897"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Call End Confirmation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const api_key = pm.variables.get(\"API_KEY\");\r",
+							"const postRequest = {\r",
+							"  url: `https://dev.ubstack.iao.fraunhofer.de/authentication/api/authenticate/apiKey?apiKey=${api_key}`,\r",
+							"  method: 'POST',\r",
+							"};\r",
+							"const res = pm.sendRequest(postRequest, (error, response) => {\r",
+							"  if (error) {\r",
+							"    console.log(error);\r",
+							"  }\r",
+							"  pm.test('response should be okay to process', () => {\r",
+							"    pm.expect(error).to.equal(null);\r",
+							"    pm.expect(response).to.have.property('code', 200);\r",
+							"    pm.expect(response).to.have.property('status', 'OK');\r",
+							"  });\r",
+							"\r",
+							"  let json = response.json();\r",
+							"  pm.variables.set(\"JWT\", json.jwt);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/end-confirmation/:commandIdentifier",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"end-confirmation",
+						":commandIdentifier"
+					],
+					"variable": [
+						{
+							"key": "commandIdentifier",
+							"value": "2ae6aace-3b70-47b7-88f4-32a0b5a93897"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start Session",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const api_key = pm.variables.get(\"API_KEY\");\r",
+							"const postRequest = {\r",
+							"  url: `https://dev.ubstack.iao.fraunhofer.de/authentication/api/authenticate/apiKey?apiKey=${api_key}`,\r",
+							"  method: 'POST',\r",
+							"};\r",
+							"const res = pm.sendRequest(postRequest, (error, response) => {\r",
+							"  if (error) {\r",
+							"    console.log(error);\r",
+							"  }\r",
+							"  pm.test('response should be okay to process', () => {\r",
+							"    pm.expect(error).to.equal(null);\r",
+							"    pm.expect(response).to.have.property('code', 200);\r",
+							"    pm.expect(response).to.have.property('status', 'OK');\r",
+							"  });\r",
+							"\r",
+							"  let json = response.json();\r",
+							"  pm.variables.set(\"JWT\", json.jwt);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "OCPI-to-country-code",
+						"value": "DE",
+						"type": "default"
+					},
+					{
+						"key": "OCPI-to-party-id",
+						"value": "FHG",
+						"type": "default"
+					},
+					{
+						"key": "OCPI-from-country-code",
+						"value": "DE",
+						"type": "default"
+					},
+					{
+						"key": "OCPI-from-party-id",
+						"value": "FHG",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"response_url\": \"https://localhost:8089/test\",\r\n    \"token\": {\r\n        \"country_code\": \"DE\",\r\n        \"party_id\": \"FHG\",\r\n        \"uid\": \"0123456789ABC\",\r\n        \"type\": \"APP_USER\",\r\n        \"contract_id\": \"FHG-Test\",\r\n        \"issuer\": \"FHG\",\r\n        \"valid\": true,\r\n        \"whitelist\": \"ALWAYS\",\r\n        \"last_updated\": \"2019-12-04T09:15:25.561Z\"\r\n    },\r\n    \"location_id\": \"1892cf37-f29c-4392-af5c-50fe6b78ec67\",\r\n    \"evse_uid\": \"892\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/command/start-session?fromPartyId=FHG&fromCountryCode=DE",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"command",
+						"start-session"
+					],
+					"query": [
+						{
+							"key": "fromPartyId",
+							"value": "FHG"
+						},
+						{
+							"key": "fromCountryCode",
+							"value": "DE"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stop Session",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const api_key = pm.variables.get(\"API_KEY\");\r",
+							"const postRequest = {\r",
+							"  url: `https://dev.ubstack.iao.fraunhofer.de/authentication/api/authenticate/apiKey?apiKey=${api_key}`,\r",
+							"  method: 'POST',\r",
+							"};\r",
+							"const res = pm.sendRequest(postRequest, (error, response) => {\r",
+							"  if (error) {\r",
+							"    console.log(error);\r",
+							"  }\r",
+							"  pm.test('response should be okay to process', () => {\r",
+							"    pm.expect(error).to.equal(null);\r",
+							"    pm.expect(response).to.have.property('code', 200);\r",
+							"    pm.expect(response).to.have.property('status', 'OK');\r",
+							"  });\r",
+							"\r",
+							"  let json = response.json();\r",
+							"  pm.variables.set(\"JWT\", json.jwt);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "OCPI-to-country-code",
+						"value": "DE",
+						"type": "default"
+					},
+					{
+						"key": "OCPI-to-party-id",
+						"value": "FHG",
+						"type": "default"
+					},
+					{
+						"key": "OCPI-from-country-code",
+						"value": "DE",
+						"type": "default"
+					},
+					{
+						"key": "OCPI-from-party-id",
+						"value": "FHG",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"response_url\": \"http://www.localhost.de\",\r\n    \"session_id\": \"OCN_Simulator_OCPPJ16_8285\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/command/stop-session?fromPartyId=FHG&fromCountryCode=DE",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"command",
+						"stop-session"
+					],
+					"query": [
+						{
+							"key": "fromPartyId",
+							"value": "FHG"
+						},
+						{
+							"key": "fromCountryCode",
+							"value": "DE"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set CPO Node URL",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const api_key = pm.variables.get(\"API_KEY\");\r",
+							"const postRequest = {\r",
+							"  url: `https://dev.ubstack.iao.fraunhofer.de/authentication/api/authenticate/apiKey?apiKey=${api_key}`,\r",
+							"  method: 'POST',\r",
+							"};\r",
+							"const res = pm.sendRequest(postRequest, (error, response) => {\r",
+							"  if (error) {\r",
+							"    console.log(error);\r",
+							"  }\r",
+							"  pm.test('response should be okay to process', () => {\r",
+							"    pm.expect(error).to.equal(null);\r",
+							"    pm.expect(response).to.have.property('code', 200);\r",
+							"    pm.expect(response).to.have.property('status', 'OK');\r",
+							"  });\r",
+							"\r",
+							"  let json = response.json();\r",
+							"  pm.variables.set(\"JWT\", json.jwt);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "https://yourcponode.com"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/set-cpo-node-url",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"set-cpo-node-url"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Authentication JWT",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://dev.ubstack.iao.fraunhofer.de/authentication/api/authenticate/apiKey?apiKey={{API_KEY}}",
+					"protocol": "https",
+					"host": [
+						"dev",
+						"ubstack",
+						"iao",
+						"fraunhofer",
+						"de"
+					],
+					"path": [
+						"authentication",
+						"api",
+						"authenticate",
+						"apiKey"
+					],
+					"query": [
+						{
+							"key": "apiKey",
+							"value": "{{API_KEY}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{JWT}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://dev.ubstack.iao.fraunhofer.de/backend/rest/ocpi-operator-api/rebeam",
+			"type": "default"
+		},
+		{
+			"key": "API_KEY",
+			"value": "w5otgqyt.MEMA0UVFa42T7vNcBBYeRvUdufHY1tgTNBQ",
+			"type": "default"
+		}
+	]
+}

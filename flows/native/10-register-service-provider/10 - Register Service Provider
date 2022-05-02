@@ -1,0 +1,35 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 10 - Register Service Provider
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+actor FleetOwnerRep
+
+FleetOwnerRep -> FleetNode : trigger KYBP (legal docs)
+FleetNode -> KYBPProvider : perform KYBP (legal docs, fleetDID, signature)
+KYBPProvider -> AttestationContract : set claim verifications (fleetDID, company claims)
+AttestationContract [dashed]-> KYBPProvider : 
+KYBPProvider [#green]-> FleetNode : KYBP VCs
+FleetNode [dashed]-> FleetOwnerRep : 
+FleetOwnerRep -> FleetNode : trigger DID Document creation
+FleetNode -> EthereumDIDRegistryContract : assemble and store DID Document (DID, service endpoints, signature)
+EthereumDIDRegistryContract [dashed]-> FleetNode :
+FleetNode [dashed]->FleetOwnerRep :
+FleetOwnerRep -> FleetNode : trigger registration
+FleetNode [#green]-> ServiceCatalogAggregator : register service catalog (DID, VP over KYBP credentials)
+ServiceCatalogAggregator -> EthereumDIDRegistryContract : get DID Document (DID)
+EthereumDIDRegistryContract [dashed]-> ServiceCatalogAggregator : DID Document
+ServiceCatalogAggregator -> ServiceCatalogAggregator : verify service endpoints and signature in DID Document
+ServiceCatalogAggregator -> EthereumDIDRegistryContract : (optional: verify company claims for DID)
+ServiceCatalogAggregator -> ServiceCatalogAggregator : store DID in list of service providers
+ServiceCatalogAggregator [dashed]-> FleetNode : 
+FleetNode [dashed]-> FleetOwnerRep
+@enduml

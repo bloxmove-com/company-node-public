@@ -1,0 +1,43 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 13 - B2C Start Car Rental
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+
+F2SApp [#green]-> FleetNode : 13.1 request rent (vehicleDID, consumerDID, packageId, VP over KYC VCs)
+FleetNode -> FleetBackend : get/validate contract data
+FleetBackend [dashed]-> FleetNode :
+FleetNode [#green]-> FleetNode :  verify consumer claims
+FleetNode -> AssetContractFactory : request new contract with contract data (consumerDID, VIN, price, requiredClaims, terms&conditions)
+AssetContractFactory -> RentalAssetContract : create new contract, set data & owner
+RentalAssetContract [dashed]-> AssetContractFactory : contract address
+AssetContractFactory [dashed]-> FleetNode : contractDID
+FleetNode [dashed]-> F2SApp : contractDID
+FleetNode [#blue]-> AttestationContract : setAttestation(contractDID, '/offerConfirm', VC)
+F2SApp -> F2SApp : check contract 
+F2SApp [#green]-> FleetNode : 13.2 completeStart(contractDID, consumerConfirmVC)
+FleetNode -> RentalAssetContract : get contract data
+RentalAssetContract [dashed]-> FleetNode : contract data
+FleetNode [#green]-> FleetNode : verify consumer claims
+FleetNode [#blue]-> AttestationContract : verify fleet and user confirmations for rental contract
+AttestationContract [dashed]-> FleetNode :
+FleetNode -> FleetBackend : verify vehicle status, set to booked
+FleetNode [dashed]-> F2SApp : ok
+FleetNode [#blue]-> AttestationContract : setAttestation(contractDID, 'consumerConfim', VC)
+F2SApp -> F2SApp : show status
+FleetNode -> FleetOwnerSmartVinNode : issue agreement (VIN, price/timeunit, consumerDID, contractDID)
+FleetOwnerSmartVinNode [dashed]-> FleetNode : agreement id
+FleetNode -> RentalAssetContract : set agreement id 
+FleetNode -> FleetOwnerSmartVinNode : calculate liability (consume agreement)
+FleetOwnerSmartVinNode [dashed]-> FleetNode : liability
+FleetNode -> FleetOwnerSmartVinNode : vehicle possession transfer (VIN, from: fleet owner, to: customer node, liability)
+FleetNode [#blue]-> AttestationContract : setAttestation(contractDID, '/providerConfirm', VC)
+@enduml

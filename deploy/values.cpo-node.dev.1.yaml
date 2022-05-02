@@ -1,0 +1,36 @@
+nodeEnv: "k8s"
+appName: "cpo-node-1"
+
+# cpo node config
+apiKey: "83jklolTL!-dev-1"
+imageURL: "069870223720.dkr.ecr.eu-central-1.amazonaws.com/blxm/cpo-node"
+accountDID: did:ethr:blxm-dev:0x40a89429d1d323C95071E0b1c8C7F4eF3671b961
+swaggerBasePath: /cpo-node-1
+ownNodeUrl: https://dev.mobilityblockchainplatform.io/cpo-node-1
+enableVCVP: "false"
+
+# asset library config
+ontId: did:ont:AYMEqbQ2Nz3YWJvrMaMS5xA5DhKrUvLeSm
+ontPrivateKeyWIF: 
+ontPublicKeyIndex: 1
+ontNodeUrl: http://polaris1.ont.io:20334
+
+web3Provider: ws://validator1-0.besu-validator1.besu:8546
+chainId: 1000
+networkName: blxm-dev
+ipfsHost: local-ipfs.local-ipfs
+ipfsPort: 5001
+ipfsProtocol: http
+ipfsBasePath: /api/v0
+accountAddress: 0x40a89429d1d323C95071E0b1c8C7F4eF3671b961
+accountPrivateKey: 
+didRegistryAddress: 0xc60784dE9cadec7d971175751ed3aE598AFd5CE2
+attestationRegistryAddress: 0x706f11D9E8BD114723528D8FE975bAAC7c7C61e2
+ensAddress: 0xEbCFd4584c6B56f342861039fE7cFfB87264B62c
+currentAccountDidMethod: ethr
+
+# connected endpoints charging case
+ssiWalletBaseUrl: https://vc-api-dev.energyweb.org
+energyWebBaseUrl: https://rebeam-dev-backend.energyweb.org
+cpoBackendBaseUrl: https://dev.ubstack.iao.fraunhofer.de/backend/rest/ocpi-operator-api/rebeam
+cpoBackendApiKey: ""

@@ -1,0 +1,47 @@
+@startuml Open/Close Door Flow
+ 
+participant "User Mobility App" as UMA 
+participant "Fleet Node" as FLN
+participant "TO Car Service" as TOC
+
+
+
+== Open/Close Door == 
+
+UMA -> FLN: request access token
+FLN --> UMA: access token
+note left
+fleetnode returns 
+its own endpoint in the token instead
+of carwallet endpoint : 
+{
+    "verifiableCredentials": [...],
+    "endpoint": "https://fleetnodeEndpoint"
+}
+
+Why?
+
+During the registration process of a tomp asset, 
+the endoint of the fleet node is used for the 
+"authEndpoint" property: 
+
+if (this.apiType === 'tomp') {
+  initialDataPropertyKeys.authEndpoint = this.ownFleetNodeUrl
+}
+
+This is needed to skip (in tomp case) the car-wallet and let the 
+UMA know which endpoint for open/close functionality
+it should use.
+
+end note
+
+UMA -> FLN: request door open or close with access token
+FLN -> TOC: request booking leg state change (id, time, event: SET_IN_USE or PAUSE)
+TOC --> FLN: receive updated booking leg
+FLN --> UMA: ok
+
+
+
+
+
+@enduml

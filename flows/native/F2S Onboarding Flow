@@ -1,0 +1,21 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title F2S Onboarding Flow
+
+legend top
+    |Color| Type |
+    |<#green>| Off-Chain Credential|
+    |<#blue>| On-Chain Credential|
+endlegend
+
+
+F2SApp <-> PlatformServices : POST /identity {address} return userDID
+F2SApp -> SampleKYC : POST /onboarding {userDID, username, password}
+SampleKYC -> SampleKYC : authenticate user
+SampleKYC -> SampleKYC : ensure publicKey and accountId are unqiue
+SampleKYC [#green]-> F2SApp : User Claims (VC Array)
+F2SApp [#green]-> F2SApp : Create Verifiable Presentation over User Claims
+@enduml

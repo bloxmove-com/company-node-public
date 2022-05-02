@@ -1,0 +1,27 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ .Values.appName }}
+  namespace: fleet-node
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: PathPrefix(`/{{ .Values.appName }}`)
+      kind: Rule
+      services:
+        - name: {{ .Values.appName }}
+          port: 80
+      middlewares:
+        - name: {{ .Values.appName }}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ .Values.appName }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /{{ .Values.appName }}

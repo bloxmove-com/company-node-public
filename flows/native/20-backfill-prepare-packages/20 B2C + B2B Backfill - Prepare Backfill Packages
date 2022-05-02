@@ -1,0 +1,15 @@
+@startuml
+
+skinparam titleFontSize 30
+skinparam ParticipantBackgroundColor white
+
+title 20 - B2C + B2B Backfill - Prepare Backfill Packages
+
+FleetNodeA -> ServiceCatalogAggregator : get available B2B services
+ServiceCatalogAggregator -> FleetNodeB : get service catalog 
+FleetNodeB [dashed]-> ServiceCatalogAggregator : list of services incl. B2B packages
+ServiceCatalogAggregator [dashed]-> FleetNodeA : list of services with fleet owner DID and fleet node URL
+FleetNodeA -> FleetNodeA : process/cache fleet node B B2B services, add uplifted services to own service catalog
+ServiceCatalogAggregator -> FleetNodeA : get service catalog
+FleetNodeA [dashed]-> ServiceCatalogAggregator : list of services incl. backfilled 
+@enduml
